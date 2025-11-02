@@ -113,7 +113,7 @@ export default function Home() {
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeInUp}
         >
-          <Stack maxW="3xl" mx="auto" align="center" textAlign="center" spacing={6}>
+          <Stack maxW="3xl" mx="auto" align="center" textAlign="center" gap={6}>
             <Heading
               as="h2"
               fontSize={{ base: "2xl", md: "3xl" }}
