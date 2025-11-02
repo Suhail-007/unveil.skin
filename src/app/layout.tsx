@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "unveil.skin - Coming Soon",
-  description: "unveil.skin is under development. We'll be live in a few months.",
+  title: "Ordyn Soap - unveil.skin",
+  description: "Ordyn. From ordinary to extraordinary. Coming soon.",
 };
 
 export default function RootLayout({
