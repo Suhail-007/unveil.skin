@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -9,11 +11,39 @@ import {
   HStack,
   Grid,
 } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 
-export const metadata = {
-  title: "Ordyn Daily Sunscreen - unveil.skin",
-  description: "Weightless SPF for real life — no white cast, no stickiness. Protects without a performance.",
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: [0.6, -0.05, 0.01, 0.99] as const },
+  },
 };
+
+const containerVariants = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  initial: { opacity: 0, y: 15 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.6, -0.05, 0.01, 0.99] as const },
+  },
+};
+
+const MotionBox = motion(Box);
+const MotionVStack = motion(VStack);
+const MotionGrid = motion(Grid);
 
 export default function SunscreenPage() {
   return (
@@ -68,18 +98,22 @@ export default function SunscreenPage() {
         </Link>
 
         {/* Product Grid */}
-        <Grid
+        <MotionGrid
           templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }}
           gap={{ base: 12, lg: 16 }}
+          initial="initial"
+          animate="animate"
+          variants={fadeInUp}
         >
           {/* Product Image */}
-          <Box
+          <MotionBox
             position="relative"
             aspectRatio={1}
             overflow="hidden"
             borderRadius="lg"
             bg="gray.50"
             _dark={{ bg: "gray.900" }}
+            variants={itemVariants}
           >
             <Image
               src="/Sunscreen.png"
@@ -89,10 +123,15 @@ export default function SunscreenPage() {
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
             />
-          </Box>
+          </MotionBox>
 
           {/* Product Details */}
-          <VStack align="stretch" justify="center" gap={6}>
+          <MotionVStack
+            align="stretch"
+            justify="center"
+            gap={6}
+            variants={itemVariants}
+          >
             <Box>
               <Text fontSize="sm" fontWeight="medium" color="gray.600" _dark={{ color: "gray.400" }}>
                 ORDYN
@@ -110,64 +149,76 @@ export default function SunscreenPage() {
               </Heading>
             </Box>
 
-            <Text fontSize="lg" lineHeight={8} color="gray.600" _dark={{ color: "gray.200" }}>
+            <Text fontSize="lg" lineHeight="1.7" color="gray.600" _dark={{ color: "gray.200" }}>
               Weightless SPF for real life — no white cast, no stickiness. Protects without a performance.
             </Text>
 
-            {/* Features */}
-            <VStack align="stretch" gap={4} mb={8}>
-              <HStack align="start" gap={3}>
-                <Box
-                  mt={1.5}
-                  h={1.5}
-                  w={1.5}
-                  borderRadius="full"
-                  className="bg-zinc-400 dark:bg-zinc-600"
-                />
-                <Box>
-                  <Heading as="h3" fontSize="md" fontWeight="medium" color="black" _dark={{ color: "white" }}>
-                    Weightless feel
+            <Text fontSize="md" lineHeight="1.6" color="gray.700" _dark={{ color: "gray.300" }}>
+              Ordyn Daily Sunscreen is designed to be the world&apos;s most wearable protection — powerful, invisible, and nourishing. Unlike heavy or chalky sunscreens, it hydrates, brightens, and shields your skin from sun and pollution without dulling its glow. It feels like skincare, not sunscreen — made for real, everyday use.
+            </Text>
+
+            {/* Real Protection, Beautifully Invisible */}
+            <Box mt={4}>
+              <Heading
+                as="h2"
+                fontSize="xl"
+                fontWeight="semibold"
+                mb={6}
+                color="black"
+                _dark={{ color: "white" }}
+              >
+                Real Protection, Beautifully Invisible
+              </Heading>
+              <MotionVStack
+                align="stretch"
+                gap={5}
+                initial="initial"
+                whileInView="animate"
+                viewport={{ once: true, margin: "-50px" }}
+                variants={containerVariants}
+              >
+                <MotionBox variants={itemVariants}>
+                  <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
+                    Broad-Spectrum SPF 50 PA+++
                   </Heading>
-                  <Text mt={1} fontSize="sm" color="gray.600" _dark={{ color: "gray.200" }}>
-                    Formulated to feel like nothing on your skin, perfect for daily wear.
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
+                    Protects against UVA, UVB, and blue light to prevent tanning, pigmentation, and early aging.
                   </Text>
-                </Box>
-              </HStack>
-              <HStack align="start" gap={3}>
-                <Box
-                  mt={1.5}
-                  h={1.5}
-                  w={1.5}
-                  borderRadius="full"
-                  className="bg-zinc-400 dark:bg-zinc-600"
-                />
-                <Box>
-                  <Heading as="h3" fontSize="md" fontWeight="medium" color="black" _dark={{ color: "white" }}>
-                    No white cast
+                </MotionBox>
+                <MotionBox variants={itemVariants}>
+                  <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
+                    Niacinamide + Hyaluronic Complex
                   </Heading>
-                  <Text mt={1} fontSize="sm" color="gray.700" _dark={{ color: "gray.300" }}>
-                    Invisible protection that works on all skin tones without leaving a trace.
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
+                    Brightens dullness, evens tone, and deeply hydrates for a naturally healthy glow.
                   </Text>
-                </Box>
-              </HStack>
-              <HStack align="start" gap={3}>
-                <Box
-                  mt={1.5}
-                  h={1.5}
-                  w={1.5}
-                  borderRadius="full"
-                  className="bg-zinc-400 dark:bg-zinc-600"
-                />
-                <Box>
-                  <Heading as="h3" fontSize="md" fontWeight="medium" color="black" _dark={{ color: "white" }}>
-                    Non-sticky formula
+                </MotionBox>
+                <MotionBox variants={itemVariants}>
+                  <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
+                    Ceramide & Vitamin E barrier support
                   </Heading>
-                  <Text mt={1} fontSize="sm" color="gray.700" _dark={{ color: "gray.300" }}>
-                    Applies smoothly and stays comfortable all day without that greasy feeling.
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
+                    Strengthens the skin&apos;s defense against dryness, stress, and environmental damage.
                   </Text>
-                </Box>
-              </HStack>
-            </VStack>
+                </MotionBox>
+                <MotionBox variants={itemVariants}>
+                  <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
+                    Zero white cast formula
+                  </Heading>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
+                    Blends seamlessly with all skin tones, leaving a smooth, satin-matte finish.
+                  </Text>
+                </MotionBox>
+                <MotionBox variants={itemVariants}>
+                  <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
+                    Non-greasy, breathable wear
+                  </Heading>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
+                    Lightweight and invisible — feels like nothing on the skin while protecting all day.
+                  </Text>
+                </MotionBox>
+              </MotionVStack>
+            </Box>
 
             {/* Coming Soon Notice */}
             <Box
@@ -193,8 +244,8 @@ export default function SunscreenPage() {
                 We&apos;re putting the finishing touches on ORDYN. Available in a few months.
               </Text>
             </Box>
-          </VStack>
-        </Grid>
+          </MotionVStack>
+        </MotionGrid>
       </Box>
     </Box>
   );

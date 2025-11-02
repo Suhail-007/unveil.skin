@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -9,11 +11,39 @@ import {
   HStack,
   Grid,
 } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 
-export const metadata = {
-  title: "Ordyn Soap Bar - unveil.skin",
-  description: "Gentle, fragrance-light cleanse for everyday skin. No fuss. No film. Just clean.",
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: [0.6, -0.05, 0.01, 0.99] as const },
+  },
 };
+
+const containerVariants = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  initial: { opacity: 0, y: 15 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.6, -0.05, 0.01, 0.99] as const },
+  },
+};
+
+const MotionBox = motion(Box);
+const MotionVStack = motion(VStack);
+const MotionGrid = motion(Grid);
 
 export default function SoapBarPage() {
   return (
@@ -68,18 +98,22 @@ export default function SoapBarPage() {
         </Link>
 
         {/* Product Grid */}
-        <Grid
+        <MotionGrid
           templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }}
           gap={{ base: 12, lg: 16 }}
+          initial="initial"
+          animate="animate"
+          variants={fadeInUp}
         >
           {/* Product Image */}
-          <Box
+          <MotionBox
             position="relative"
             aspectRatio={1}
             overflow="hidden"
             borderRadius="lg"
             bg="gray.50"
             _dark={{ bg: "gray.900" }}
+            variants={itemVariants}
           >
             <Image
               src="/Soap_bar.png"
@@ -89,10 +123,15 @@ export default function SoapBarPage() {
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
             />
-          </Box>
+          </MotionBox>
 
           {/* Product Details */}
-          <VStack align="stretch" justify="center" gap={6}>
+          <MotionVStack
+            align="stretch"
+            justify="center"
+            gap={6}
+            variants={itemVariants}
+          >
             <Box>
               <Text fontSize="sm" fontWeight="medium" color="gray.600" _dark={{ color: "gray.400" }}>
                 ORDYN
@@ -110,64 +149,76 @@ export default function SoapBarPage() {
               </Heading>
             </Box>
 
-            <Text fontSize="lg" lineHeight={8} color="gray.600" _dark={{ color: "gray.200" }}>
+            <Text fontSize="lg" lineHeight="1.7" color="gray.600" _dark={{ color: "gray.200" }}>
               Gentle, fragrance-light cleanse for everyday skin. No fuss. No film. Just clean.
             </Text>
 
-            {/* Features */}
-            <VStack align="stretch" gap={4} mb={8}>
-              <HStack align="start" gap={3}>
-                <Box
-                  mt={1.5}
-                  h={1.5}
-                  w={1.5}
-                  borderRadius="full"
-                  className="bg-zinc-400 dark:bg-zinc-600"
-                />
-                <Box>
-                  <Heading as="h3" fontSize="md" fontWeight="medium" color="black" _dark={{ color: "white" }}>
-                    Gentle formulation
+            <Text fontSize="md" lineHeight="1.6" color="gray.700" _dark={{ color: "gray.300" }}>
+              A simple bar with extraordinary purpose ? Ordyn Soap Bar helps reduce acne, pigmentation, and tanning while keeping the skin&apos;s moisture and microbiome balanced. Its science-backed blend of brightening and soothing actives works quietly every day to bring out your skin&apos;s natural clarity and softness.
+            </Text>
+
+            {/* Formulated with Purpose */}
+            <Box mt={4}>
+              <Heading
+                as="h2"
+                fontSize="xl"
+                fontWeight="semibold"
+                mb={6}
+                color="black"
+                _dark={{ color: "white" }}
+              >
+                Formulated with Purpose
+              </Heading>
+              <MotionVStack
+                align="stretch"
+                gap={5}
+                initial="initial"
+                whileInView="animate"
+                viewport={{ once: true, margin: "-50px" }}
+                variants={containerVariants}
+              >
+                <MotionBox variants={itemVariants}>
+                  <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
+                    Niacinamide-powered clarity
                   </Heading>
-                  <Text mt={1} fontSize="sm" color="gray.600" _dark={{ color: "gray.200" }}>
-                    Formulated for daily use without stripping your skin&apos;s natural balance.
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
+                    Refines pores, evens skin tone, and fades dark spots for a naturally brighter look.
                   </Text>
-                </Box>
-              </HStack>
-              <HStack align="start" gap={3}>
-                <Box
-                  mt={1.5}
-                  h={1.5}
-                  w={1.5}
-                  borderRadius="full"
-                  className="bg-zinc-400 dark:bg-zinc-600"
-                />
-                <Box>
-                  <Heading as="h3" fontSize="md" fontWeight="medium" color="black" _dark={{ color: "white" }}>
-                    Fragrance-light
+                </MotionBox>
+                <MotionBox variants={itemVariants}>
+                  <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
+                    Hydroquinone micro-dose complex
                   </Heading>
-                  <Text mt={1} fontSize="sm" color="gray.700" _dark={{ color: "gray.300" }}>
-                    Subtle, natural scent that won&apos;t overwhelm your senses.
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
+                    Targets pigmentation and blackheads while maintaining a balanced, uniform tone.
                   </Text>
-                </Box>
-              </HStack>
-              <HStack align="start" gap={3}>
-                <Box
-                  mt={1.5}
-                  h={1.5}
-                  w={1.5}
-                  borderRadius="full"
-                  className="bg-zinc-400 dark:bg-zinc-600"
-                />
-                <Box>
-                  <Heading as="h3" fontSize="md" fontWeight="medium" color="black" _dark={{ color: "white" }}>
-                    No residue
+                </MotionBox>
+                <MotionBox variants={itemVariants}>
+                  <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
+                    Amino-protein base
                   </Heading>
-                  <Text mt={1} fontSize="sm" color="gray.700" _dark={{ color: "gray.300" }}>
-                    Rinses clean without leaving any film or sticky feeling behind.
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
+                    Strengthens skin and preserves its protective barrier while cleansing gently.
                   </Text>
-                </Box>
-              </HStack>
-            </VStack>
+                </MotionBox>
+                <MotionBox variants={itemVariants}>
+                  <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
+                    Glycerin & aloe moisture lock
+                  </Heading>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
+                    Hydrates and comforts the skin after every wash ? no tightness, no dryness.
+                  </Text>
+                </MotionBox>
+                <MotionBox variants={itemVariants}>
+                  <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
+                    Balanced pH, daily-safe
+                  </Heading>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
+                    Gentle enough for everyday use; supports healthy skin flora and resilience.
+                  </Text>
+                </MotionBox>
+              </MotionVStack>
+            </Box>
 
             {/* Coming Soon Notice */}
             <Box
@@ -193,8 +244,8 @@ export default function SoapBarPage() {
                 We&apos;re putting the finishing touches on ORDYN. Available in a few months.
               </Text>
             </Box>
-          </VStack>
-        </Grid>
+          </MotionVStack>
+        </MotionGrid>
       </Box>
     </Box>
   );
