@@ -10,7 +10,10 @@ import {
 
 export default function WaitlistForm() {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     // hydrate last email if present
@@ -20,18 +23,43 @@ export default function WaitlistForm() {
     } catch {}
   }, []);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+    setError("");
+    
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      const key = "unveil.waitlist.emails";
-      const existing = JSON.parse(localStorage.getItem(key) || "[]");
-      const next = Array.isArray(existing) ? existing : [];
-      if (!next.includes(email)) next.push(email);
-      localStorage.setItem(key, JSON.stringify(next));
-      localStorage.setItem("unveil.waitlist.lastEmail", email);
-    } catch {}
-    setSubmitted(true);
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, name: name.trim() || undefined }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to add to waitlist");
+      }
+
+      // Save email to localStorage for convenience
+      try {
+        localStorage.setItem("unveil.waitlist.lastEmail", email);
+      } catch {}
+
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (submitted) {
@@ -44,28 +72,57 @@ export default function WaitlistForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Stack direction={{ base: "column", sm: "row" }} gap={3}>
-        <Box flex={1}>
+      <Stack direction={{ base: "column", sm: "row" }} gap={3} align={{ base: "stretch", sm: "flex-end" }}>
+        <Stack direction={{ base: "column", sm: "row" }} gap={2} flex={1}>
+          <Input
+            id="name"
+            type="text"
+            placeholder="Your name (optional)"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            disabled={loading}
+            borderRadius="full"
+            size={{ base: "md", sm: "md" }}
+            className="border-zinc-300 bg-white text-black focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white disabled:opacity-50"
+            aria-label="Name"
+            flex={{ base: "1", sm: "0 0 auto" }}
+            minW={{ base: "100%", sm: "160px" }}
+          />
           <Input
             id="email"
             type="email"
             required
             placeholder="you@example.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError("");
+            }}
+            disabled={loading}
             borderRadius="full"
-            className="border-zinc-300 bg-white text-black focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
+            size={{ base: "md", sm: "md" }}
+            className="border-zinc-300 bg-white text-black focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white disabled:opacity-50"
             aria-label="Email address"
+            flex={1}
           />
-        </Box>
+        </Stack>
         <Button
           type="submit"
+          disabled={loading}
           borderRadius="full"
-          className="bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+          size={{ base: "md", sm: "md" }}
+          px={8}
+          className="bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 disabled:opacity-50"
+          flexShrink={0}
         >
-          Notify me
+          {loading ? "Adding..." : "Notify me"}
         </Button>
       </Stack>
+      {error && (
+        <Box mt={2} fontSize="xs" color="red.500" className="text-red-500 dark:text-red-400">
+          {error}
+        </Box>
+      )}
     </form>
   );
 }

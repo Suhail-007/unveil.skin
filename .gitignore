@@ -42,3 +42,12 @@ next-env.d.ts
 
 # playwright mcp
 .playwright-mcp
+
+# whatsapp (removed)
+.whatsapp-auth
+.wwebjs_cache
+
+# prisma
+/src/generated/prisma
+*.db
+*.db-journal
