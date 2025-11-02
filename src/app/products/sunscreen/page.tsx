@@ -22,7 +22,7 @@ export default function SunscreenPage() {
       <Box as="header" borderBottom="1px" borderColor="gray.200" _dark={{ borderColor: "gray.800" }}>
         <Container maxW="7xl" px={6} py={6}>
           <Link href="/">
-            <VStack align="start" spacing={1}>
+            <VStack align="start" gap={1}>
               <Heading
                 as="h1"
                 fontSize="2xl"
@@ -49,20 +49,20 @@ export default function SunscreenPage() {
         <Link href="/">
           <HStack
             mb={8}
-            spacing={2}
+            gap={2}
             color="gray.700"
             _dark={{ color: "gray.300" }}
             _hover={{ color: "black", _dark: { color: "white" } }}
             transition="color 0.2s"
           >
-            <Box as="svg" width={4} height={4} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg width={16} height={16} fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ display: "inline-block" }}>
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
                 d="M15 19l-7-7 7-7"
               />
-            </Box>
+            </svg>
             <Text fontSize="sm">Back to products</Text>
           </HStack>
         </Link>
@@ -92,7 +92,7 @@ export default function SunscreenPage() {
           </Box>
 
           {/* Product Details */}
-          <VStack align="stretch" justify="center" spacing={6}>
+          <VStack align="stretch" justify="center" gap={6}>
             <Box>
               <Text fontSize="sm" fontWeight="medium" color="gray.600" _dark={{ color: "gray.400" }}>
                 ORDYN
@@ -115,8 +115,8 @@ export default function SunscreenPage() {
             </Text>
 
             {/* Features */}
-            <VStack align="stretch" spacing={4} mb={8}>
-              <HStack align="start" spacing={3}>
+            <VStack align="stretch" gap={4} mb={8}>
+              <HStack align="start" gap={3}>
                 <Box
                   mt={1.5}
                   h={1.5}
@@ -133,7 +133,7 @@ export default function SunscreenPage() {
                   </Text>
                 </Box>
               </HStack>
-              <HStack align="start" spacing={3}>
+              <HStack align="start" gap={3}>
                 <Box
                   mt={1.5}
                   h={1.5}
@@ -150,7 +150,7 @@ export default function SunscreenPage() {
                   </Text>
                 </Box>
               </HStack>
-              <HStack align="start" spacing={3}>
+              <HStack align="start" gap={3}>
                 <Box
                   mt={1.5}
                   h={1.5}
@@ -178,7 +178,7 @@ export default function SunscreenPage() {
               _dark={{ borderColor: "gray.800", bg: "gray.900" }}
               p={6}
             >
-              <HStack spacing={2} mb={2}>
+              <HStack gap={2} mb={2}>
                 <Box
                   h={2}
                   w={2}

@@ -5,8 +5,6 @@ import {
   Box,
   Input,
   Button,
-  FormControl,
-  FormLabel,
   Stack,
 } from "@chakra-ui/react";
 
@@ -45,10 +43,9 @@ export default function WaitlistForm() {
   }
 
   return (
-    <Box as="form" onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <Stack direction={{ base: "column", sm: "row" }} gap={3}>
-        <FormControl flex={1}>
-          <FormLabel srOnly>Email address</FormLabel>
+        <Box flex={1}>
           <Input
             id="email"
             type="email"
@@ -58,8 +55,9 @@ export default function WaitlistForm() {
             onChange={(e) => setEmail(e.target.value)}
             borderRadius="full"
             className="border-zinc-300 bg-white text-black focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
+            aria-label="Email address"
           />
-        </FormControl>
+        </Box>
         <Button
           type="submit"
           borderRadius="full"
@@ -68,6 +66,6 @@ export default function WaitlistForm() {
           Notify me
         </Button>
       </Stack>
-    </Box>
+    </form>
   );
 }
