@@ -37,7 +37,10 @@ export default function Home() {
         {/* Product Preview */}
         <div id="products" className="mb-20 grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
           {/* Soap Bar */}
-          <div className="group relative overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900">
+          <Link
+            href="/products/soap-bar"
+            className="group relative overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900 transition-transform hover:scale-[1.02]"
+          >
             <div className="aspect-square relative">
               <Image
                 src="/Soap_bar.png"
@@ -54,10 +57,13 @@ export default function Home() {
                 Gentle, fragrance-light cleanse for everyday skin. No fuss. No film. Just clean.
               </p>
             </div>
-          </div>
+          </Link>
 
           {/* Sunscreen */}
-          <div className="group relative overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900">
+          <Link
+            href="/products/sunscreen"
+            className="group relative overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900 transition-transform hover:scale-[1.02]"
+          >
             <div className="aspect-square relative">
               <Image
                 src="/Sunscreen.png"
@@ -74,7 +80,7 @@ export default function Home() {
                 Weightless SPF for real life — no white cast, no stickiness. Protects without a performance.
               </p>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Waitlist disabled for now */}
