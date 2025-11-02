@@ -90,7 +90,7 @@ export default function Home() {
             maxW="2xl"
             mt={4}
             fontSize="lg"
-            lineHeight={8}
+            lineHeight="1.7"
             className="text-zinc-600 dark:text-zinc-400"
           >
             unveil<Text as="span" className="text-zinc-400">.skin</Text> crafts daily essentials
@@ -130,7 +130,7 @@ export default function Home() {
             <Text
               maxW="2xl"
               fontSize={{ base: "lg", md: "xl" }}
-              lineHeight={8}
+              lineHeight="1.7"
               fontStyle="italic"
               className="text-zinc-700 dark:text-zinc-300"
             >
@@ -183,7 +183,7 @@ export default function Home() {
               <Heading as="h3" fontSize="xl" fontWeight="semibold" className="text-black dark:text-white">
                 Ordyn Soap Bar
               </Heading>
-              <Text mt={2} fontSize="sm" lineHeight={6} className="text-zinc-600 dark:text-zinc-400">
+              <Text mt={2} fontSize="sm" lineHeight="1.6" className="text-zinc-600 dark:text-zinc-400">
                 Gentle, fragrance-light cleanse for everyday skin. No fuss. No film.
                 Just clean.
               </Text>
@@ -230,7 +230,7 @@ export default function Home() {
               <Heading as="h3" fontSize="xl" fontWeight="semibold" className="text-black dark:text-white">
                 Ordyn Daily Sunscreen
               </Heading>
-              <Text mt={2} fontSize="sm" lineHeight={6} className="text-zinc-600 dark:text-zinc-400">
+              <Text mt={2} fontSize="sm" lineHeight="1.6" className="text-zinc-600 dark:text-zinc-400">
                 Weightless SPF for real life — no white cast, no stickiness.
                 Protects without a performance.
               </Text>

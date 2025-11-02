@@ -149,11 +149,11 @@ export default function SoapBarPage() {
               </Heading>
             </Box>
 
-            <Text fontSize="lg" lineHeight={8} color="gray.600" _dark={{ color: "gray.200" }}>
+            <Text fontSize="lg" lineHeight="1.7" color="gray.600" _dark={{ color: "gray.200" }}>
               Gentle, fragrance-light cleanse for everyday skin. No fuss. No film. Just clean.
             </Text>
 
-            <Text fontSize="md" lineHeight={7} color="gray.700" _dark={{ color: "gray.300" }}>
+            <Text fontSize="md" lineHeight="1.6" color="gray.700" _dark={{ color: "gray.300" }}>
               A simple bar with extraordinary purpose ? Ordyn Soap Bar helps reduce acne, pigmentation, and tanning while keeping the skin&apos;s moisture and microbiome balanced. Its science-backed blend of brightening and soothing actives works quietly every day to bring out your skin&apos;s natural clarity and softness.
             </Text>
 
@@ -181,7 +181,7 @@ export default function SoapBarPage() {
                   <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
                     Niacinamide-powered clarity
                   </Heading>
-                  <Text fontSize="sm" lineHeight={6} color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
                     Refines pores, evens skin tone, and fades dark spots for a naturally brighter look.
                   </Text>
                 </MotionBox>
@@ -189,7 +189,7 @@ export default function SoapBarPage() {
                   <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
                     Hydroquinone micro-dose complex
                   </Heading>
-                  <Text fontSize="sm" lineHeight={6} color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
                     Targets pigmentation and blackheads while maintaining a balanced, uniform tone.
                   </Text>
                 </MotionBox>
@@ -197,7 +197,7 @@ export default function SoapBarPage() {
                   <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
                     Amino-protein base
                   </Heading>
-                  <Text fontSize="sm" lineHeight={6} color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
                     Strengthens skin and preserves its protective barrier while cleansing gently.
                   </Text>
                 </MotionBox>
@@ -205,7 +205,7 @@ export default function SoapBarPage() {
                   <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
                     Glycerin & aloe moisture lock
                   </Heading>
-                  <Text fontSize="sm" lineHeight={6} color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
                     Hydrates and comforts the skin after every wash ? no tightness, no dryness.
                   </Text>
                 </MotionBox>
@@ -213,7 +213,7 @@ export default function SoapBarPage() {
                   <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
                     Balanced pH, daily-safe
                   </Heading>
-                  <Text fontSize="sm" lineHeight={6} color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
                     Gentle enough for everyday use; supports healthy skin flora and resilience.
                   </Text>
                 </MotionBox>

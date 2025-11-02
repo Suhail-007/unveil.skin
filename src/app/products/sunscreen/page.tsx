@@ -149,11 +149,11 @@ export default function SunscreenPage() {
               </Heading>
             </Box>
 
-            <Text fontSize="lg" lineHeight={8} color="gray.600" _dark={{ color: "gray.200" }}>
+            <Text fontSize="lg" lineHeight="1.7" color="gray.600" _dark={{ color: "gray.200" }}>
               Weightless SPF for real life — no white cast, no stickiness. Protects without a performance.
             </Text>
 
-            <Text fontSize="md" lineHeight={7} color="gray.700" _dark={{ color: "gray.300" }}>
+            <Text fontSize="md" lineHeight="1.6" color="gray.700" _dark={{ color: "gray.300" }}>
               Ordyn Daily Sunscreen is designed to be the world&apos;s most wearable protection — powerful, invisible, and nourishing. Unlike heavy or chalky sunscreens, it hydrates, brightens, and shields your skin from sun and pollution without dulling its glow. It feels like skincare, not sunscreen — made for real, everyday use.
             </Text>
 
@@ -181,7 +181,7 @@ export default function SunscreenPage() {
                   <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
                     Broad-Spectrum SPF 50 PA+++
                   </Heading>
-                  <Text fontSize="sm" lineHeight={6} color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
                     Protects against UVA, UVB, and blue light to prevent tanning, pigmentation, and early aging.
                   </Text>
                 </MotionBox>
@@ -189,7 +189,7 @@ export default function SunscreenPage() {
                   <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
                     Niacinamide + Hyaluronic Complex
                   </Heading>
-                  <Text fontSize="sm" lineHeight={6} color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
                     Brightens dullness, evens tone, and deeply hydrates for a naturally healthy glow.
                   </Text>
                 </MotionBox>
@@ -197,7 +197,7 @@ export default function SunscreenPage() {
                   <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
                     Ceramide & Vitamin E barrier support
                   </Heading>
-                  <Text fontSize="sm" lineHeight={6} color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
                     Strengthens the skin&apos;s defense against dryness, stress, and environmental damage.
                   </Text>
                 </MotionBox>
@@ -205,7 +205,7 @@ export default function SunscreenPage() {
                   <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
                     Zero white cast formula
                   </Heading>
-                  <Text fontSize="sm" lineHeight={6} color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
                     Blends seamlessly with all skin tones, leaving a smooth, satin-matte finish.
                   </Text>
                 </MotionBox>
@@ -213,7 +213,7 @@ export default function SunscreenPage() {
                   <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
                     Non-greasy, breathable wear
                   </Heading>
-                  <Text fontSize="sm" lineHeight={6} color="gray.600" _dark={{ color: "gray.300" }}>
+                  <Text fontSize="sm" lineHeight="1.6" color="gray.600" _dark={{ color: "gray.300" }}>
                     Lightweight and invisible — feels like nothing on the skin while protecting all day.
                   </Text>
                 </MotionBox>
