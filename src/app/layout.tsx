@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import Provider from "./provider";
 import "./globals.css";
 
@@ -26,6 +27,7 @@ export default function RootLayout({
         className={`${montserrat.variable} antialiased`}
       >
         <Provider>{children}</Provider>
+        <Analytics />
       </body>
     </html>
   );
