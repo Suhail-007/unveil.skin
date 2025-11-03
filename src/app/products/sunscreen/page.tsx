@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   Badge,
   Box,
+  Button,
   Container,
   Grid,
   Heading,
@@ -49,26 +50,37 @@ const itemVariants = {
   },
 };
 
-const benefits = [
+const publicBenefits = [
   {
-    title: "Broad-spectrum SPF 50 PA+++",
-    copy: "Advanced UV filters may help block UVA, UVB, infrared, and blue light without leaving a cast.",
+    title: "Sun Protection",
+    copy: "Broad-spectrum SPF 50 PA+++ shields against UV rays.",
   },
   {
-    title: "Niacinamide + hyaluronic complex",
-    copy: "May help brighten dullness, potentially control excess oil, and may replenish hydration for a glass-like glow.",
+    title: "Pigmentation",
+    copy: "Helps prevent dark spots and sun-induced discoloration.",
   },
   {
-    title: "Ceramide + vitamin E barrier support",
-    copy: "May help strengthen the lipid matrix to potentially keep pollutants out and moisture in.",
+    title: "Tanning",
+    copy: "Protects against tanning and maintains even skin tone.",
   },
   {
-    title: "Peppermint-free cooling tech",
-    copy: "Menthol-free polymers may provide a soft chill that may help calm heat flush without irritating sensitive skin.",
+    title: "Anti-aging",
+    copy: "Guards against premature aging and fine lines.",
+  },
+];
+
+const ingredients = [
+  {
+    title: "UV filters",
+    copy: "Advanced protection against UVA, UVB, and blue light.",
   },
   {
-    title: "Non-greasy, breathable wear",
-    copy: "Serum-cream texture may melt in under 30 seconds and may layer seamlessly under makeup.",
+    title: "Niacinamide",
+    copy: "Brightens and controls oil.",
+  },
+  {
+    title: "Ceramides",
+    copy: "Strengthens skin barrier.",
   },
 ];
 
@@ -211,10 +223,24 @@ export default function SunscreenPage() {
 
             <Stack gap={4}>
               <Text fontSize="lg" lineHeight="1.7" color="gray.600" _dark={{ color: "gray.200" }}>
-                A serum-light SPF 50 PA+++ that may disappear on every tone, may stay sweat-resilient in humid heat, and may double as a barrier-supporting day cream.
+                Serum-light broad-spectrum protection with niacinamide. Zero white cast, breathable finish, perfect under makeup.
               </Text>
-              <Text fontSize="md" lineHeight="1.7" color="gray.700" _dark={{ color: "gray.300" }}>
-                With niacinamide, multi-weight hyaluronic acid, and ceramide antioxidants, ORDYN Daily Sunscreen may help keep skin luminous while potentially guarding against UV, pollution, and heat stress. It is tested for compatibility under makeup and for long-hour wear on acne-prone skin.
+            </Stack>
+
+            <Stack gap={4}>
+              <Button
+                size="lg"
+                borderRadius="full"
+                px={8}
+                h={14}
+                fontSize="md"
+                fontWeight="semibold"
+                className="bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+              >
+                Buy Now
+              </Button>
+              <Text fontSize="xs" color="gray.500" _dark={{ color: "gray.400" }} textAlign="center">
+                Coming soon
               </Text>
             </Stack>
 
@@ -227,27 +253,20 @@ export default function SunscreenPage() {
                 color="black"
                 _dark={{ color: "white" }}
               >
-                Why you&apos;ll reach for it daily
+                Benefits
               </Heading>
-              <MotionVStack
-                align="stretch"
-                gap={5}
-                initial="initial"
-                whileInView="animate"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={containerVariants}
-              >
-                {benefits.map((benefit) => (
+              <SimpleGrid columns={{ base: 2, md: 4 }} gap={4}>
+                {publicBenefits.map((benefit) => (
                   <MotionBox key={benefit.title} variants={itemVariants}>
-                    <Heading as="h3" fontSize="md" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
+                    <Text fontSize="sm" fontWeight="semibold" color="black" _dark={{ color: "white" }} mb={1}>
                       {benefit.title}
-                    </Heading>
-                    <Text fontSize="sm" lineHeight="1.7" color="gray.600" _dark={{ color: "gray.300" }}>
+                    </Text>
+                    <Text fontSize="xs" lineHeight="1.5" color="gray.600" _dark={{ color: "gray.300" }}>
                       {benefit.copy}
                     </Text>
                   </MotionBox>
                 ))}
-              </MotionVStack>
+              </SimpleGrid>
             </Box>
 
             <SimpleGrid columns={{ base: 1, md: 2 }} gap={8}>
@@ -320,31 +339,40 @@ export default function SunscreenPage() {
               </MotionStack>
             </SimpleGrid>
 
-            <MotionStack
-              borderRadius="xl"
-              border="1px"
-              borderColor="gray.200"
-              bg="gray.50"
-              _dark={{ borderColor: "gray.800", bg: "gray.900" }}
-              p={6}
-              gap={3}
-              variants={itemVariants}
-            >
-              <HStack gap={2}>
-                <Box
-                  h={2}
-                  w={2}
-                  borderRadius="full"
-                  className="bg-zinc-400 dark:bg-zinc-600 animate-pulse"
-                />
-                <Text fontSize="sm" fontWeight="medium" color="gray.600" _dark={{ color: "gray.200" }}>
-                  Coming soon
-                </Text>
-              </HStack>
-              <Text fontSize="sm" color="gray.500" _dark={{ color: "gray.300" }}>
-                ORDYN Daily Sunscreen is currently in clinical safety testing. Waitlist to access early sampling rounds and dermatologist-led wear trials.
+            <Box mt={8}>
+              <Heading
+                as="h2"
+                fontSize="lg"
+                fontWeight="semibold"
+                mb={4}
+                color="black"
+                _dark={{ color: "white" }}
+              >
+                What makes it work
+              </Heading>
+              <Stack gap={3}>
+                {ingredients.map((ingredient) => (
+                  <Box key={ingredient.title}>
+                    <Text fontSize="sm" fontWeight="medium" color="black" _dark={{ color: "white" }} mb={1}>
+                      {ingredient.title}
+                    </Text>
+                    <Text fontSize="xs" lineHeight="1.5" color="gray.600" _dark={{ color: "gray.300" }}>
+                      {ingredient.copy}
+                    </Text>
+                  </Box>
+                ))}
+              </Stack>
+            </Box>
+
+            <Box mt={8} pt={6} borderTop="1px" borderColor="gray.200" _dark={{ borderColor: "gray.800" }}>
+              <Text fontSize="xs" fontWeight="semibold" letterSpacing="widest" textTransform="uppercase" color="gray.500" _dark={{ color: "gray.400" }} mb={2}>
+                Manufactured by
               </Text>
-            </MotionStack>
+              <Text fontSize="sm" color="gray.700" _dark={{ color: "gray.300" }}>
+                XYXX Cosmo
+                <br />Noida Industrial Area, Uttar Pradesh
+              </Text>
+            </Box>
           </MotionVStack>
         </MotionGrid>
       </Box>
