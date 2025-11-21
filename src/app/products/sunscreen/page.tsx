@@ -104,8 +104,8 @@ const MotionGrid = motion(Grid);
 const MotionStack = motion(Stack);
 
 export default function SunscreenPage() {
-  const [logoSrc, setLogoSrc] = useState("/Logo.svg"); // Default to light mode for SSR
-  const resolvedLogoSrc = useColorModeValue("/Logo.svg", "/Logo_Dark.svg");
+  const [logoSrc, setLogoSrc] = useState("/Logo_Dark.svg"); // Default to light mode for SSR
+  const resolvedLogoSrc = useColorModeValue("/Logo_Dark.svg", "/Logo.svg");
   
   useEffect(() => {
     // Update logo after hydration to match client theme
@@ -174,7 +174,7 @@ export default function SunscreenPage() {
             variants={itemVariants}
           >
             <Image
-              src="/Sunscreen.png"
+              src="/assets/Sunscreen_mainside_and_Soap.jpg"
               alt="Ordyn daily sunscreen"
               fill
               style={{ objectFit: "cover" }}

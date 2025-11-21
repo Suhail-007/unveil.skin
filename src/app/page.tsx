@@ -59,7 +59,7 @@ const productCards = [
   {
     name: "Ordyn Soap Bar",
     slug: "/products/soap-bar",
-    image: "/Soap_bar.png",
+    image: "/assets/Soap-Bar-Standing.jpg",
     alt: "Ordyn soap bar",
     ribbon: "Clarifying Cleanse",
     description: "A gentle, low-foam cleanser with amino-acid surfactants.",
@@ -67,7 +67,7 @@ const productCards = [
   {
     name: "Ordyn Daily Sunscreen",
     slug: "/products/sunscreen",
-    image: "/Sunscreen.png",
+    image: "/assets/Sunscreen_mainside_and_Soap.jpg",
     alt: "Ordyn daily sunscreen",
     ribbon: "Invisible SPF 50 PA+++",
     description: "Serum-light broad-spectrum protection with niacinamide.",
@@ -79,8 +79,8 @@ const MotionStack = motion(Stack);
 const MotionSimpleGrid = motion(SimpleGrid);
 
 export default function Home() {
-  const [logoSrc, setLogoSrc] = useState("/Logo.svg"); // Default to light mode for SSR
-  const resolvedLogoSrc = useColorModeValue("/Logo.svg", "/Logo_Dark.svg");
+  const [logoSrc, setLogoSrc] = useState("/Logo_Dark.svg"); // Default to light mode for SSR
+  const resolvedLogoSrc = useColorModeValue("/Logo_Dark.svg", "/Logo.svg");
   
   useEffect(() => {
     // Update logo after hydration to match client theme
@@ -126,7 +126,7 @@ export default function Home() {
             zIndex={0}
           >
             <Image
-              src="/assets/product-bg.jpg"
+              src="/assets/Soap11.jpg"
               alt=""
               fill
               style={{ objectFit: "cover" }}
@@ -219,9 +219,8 @@ export default function Home() {
         >
           <SimpleGrid columns={{ base: 1, lg: 2 }} gap={{ base: 10, md: 14 }}>
             {productCards.map((product, index) => (
-              <Link href={product.slug} style={{ textDecoration: 'none' }}>
+              <Link key={product.name} href={product.slug} style={{ textDecoration: 'none' }}>
                 <MotionBox
-                  key={product.name}
                   borderRadius="3xl"
                   overflow="hidden"
                   className="bg-white/85 dark:bg-zinc-950/80 border border-zinc-200/60 dark:border-zinc-800/60"
@@ -291,10 +290,10 @@ export default function Home() {
               <Image
                 src={logoSrc}
                 alt="unveil.skin"
-                width={180}
-                height={53}
-                style={{ height: '24px', width: 'auto' }}
-                className="h-6 w-auto"
+                width={200}
+                height={64}
+                style={{ width: '128px', height: 'auto' }}
+                className="w-auto"
               />
               <Text fontSize="sm" className="text-zinc-600 dark:text-zinc-400">
                 Formulated and crafted in India. Dermatologist-guided, clinically vetted, and mindful of the planet.
@@ -304,6 +303,14 @@ export default function Home() {
               <Text fontSize="xs" fontWeight="semibold" letterSpacing="widest" textTransform="uppercase" className="text-zinc-500 dark:text-zinc-400">
                 Marketed by
               </Text>
+              <Image
+                src="/favicon.svg"
+                alt="unveil.skin"
+                width={48}
+                height={48}
+                style={{ width: '48px', height: '48px' }}
+                className="w-12 h-12"
+              />
               <Text fontSize="sm" className="text-zinc-700 dark:text-zinc-300">
                 Unveil Skin
                 <br />New Delhi, India

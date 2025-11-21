@@ -104,8 +104,8 @@ const MotionGrid = motion(Grid);
 const MotionStack = motion(Stack);
 
 export default function SoapBarPage() {
-  const [logoSrc, setLogoSrc] = useState("/Logo.svg"); // Default to light mode for SSR
-  const resolvedLogoSrc = useColorModeValue("/Logo.svg", "/Logo_Dark.svg");
+  const [logoSrc, setLogoSrc] = useState("/Logo_Dark.svg"); // Default to light mode for SSR
+  const resolvedLogoSrc = useColorModeValue("/Logo_Dark.svg", "/Logo.svg");
   const [showFallback, setShowFallback] = useState(false);
   
   useEffect(() => {
@@ -186,7 +186,7 @@ export default function SoapBarPage() {
               </video>
             ) : (
               <Image
-                src="/Soap_bar.png"
+                src="/assets/Soap-Bar-Standing.jpg"
                 alt="Ordyn soap bar"
                 fill
                 style={{ objectFit: "cover" }}
