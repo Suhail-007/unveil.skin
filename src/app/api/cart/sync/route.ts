@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import { CartItem } from '@/lib/sequelize/models';
+import { Op } from 'sequelize';
 
 export async function POST(request: Request) {
   try {
@@ -27,25 +28,50 @@ export async function POST(request: Request) {
 
     const userId = session.user.id;
 
-    // Merge guest cart with user cart
-    for (const item of guestCart) {
-      const existingCartItem = await CartItem.findOne({
-        where: { userId, productId: item.productId },
-      });
+    // Get all product IDs from guest cart
+    const productIds = guestCart.map(item => item.productId);
 
-      if (existingCartItem) {
-        // Update quantity if item already exists
-        existingCartItem.quantity += item.quantity;
-        await existingCartItem.save();
+    // Fetch all existing cart items in a single query
+    const existingCartItems = await CartItem.findAll({
+      where: { 
+        userId,
+        productId: {
+          [Op.in]: productIds
+        }
+      },
+    });
+
+    // Create a map for quick lookups
+    const existingItemsMap = new Map(
+      existingCartItems.map(item => [item.productId, item])
+    );
+
+    // Prepare bulk operations
+    const itemsToUpdate: CartItem[] = [];
+    const itemsToCreate: { userId: string; productId: string; quantity: number }[] = [];
+
+    for (const item of guestCart) {
+      const existingItem = existingItemsMap.get(item.productId);
+      
+      if (existingItem) {
+        // Update quantity for existing item
+        existingItem.quantity += item.quantity;
+        itemsToUpdate.push(existingItem);
       } else {
-        // Create new cart item
-        await CartItem.create({
+        // Prepare new item for bulk creation
+        itemsToCreate.push({
           userId,
           productId: item.productId,
           quantity: item.quantity,
         });
       }
     }
+
+    // Perform bulk operations
+    await Promise.all([
+      ...itemsToUpdate.map(item => item.save()),
+      itemsToCreate.length > 0 ? CartItem.bulkCreate(itemsToCreate) : Promise.resolve(),
+    ]);
 
     return NextResponse.json(
       { message: 'Cart synced successfully' },

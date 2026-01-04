@@ -84,10 +84,11 @@ export default function AuthModal({ open, onClose, allowGuest = true }: AuthModa
                       textAlign="center"
                       fontSize="sm"
                       px={4}
-                      className="bg-white dark:bg-zinc-950"
                       display="inline-block"
                       mx="auto"
                       width="fit-content"
+                      backgroundColor="white"
+                      _dark={{ backgroundColor: "zinc.950" }}
                     >
                       or
                     </Text>
