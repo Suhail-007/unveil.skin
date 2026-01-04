@@ -10,7 +10,10 @@ interface CartItemAttributes {
   updatedAt?: Date;
 }
 
-interface CartItemCreationAttributes extends Optional<CartItemAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+interface CartItemCreationAttributes
+  extends Optional<CartItemAttributes, 'id' | 'createdAt' | 'updatedAt'> {
+  // Creation attributes
+}
 
 class CartItem extends Model<CartItemAttributes, CartItemCreationAttributes> implements CartItemAttributes {
   public id!: string;

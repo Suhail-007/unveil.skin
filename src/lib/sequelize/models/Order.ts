@@ -10,7 +10,10 @@ interface OrderAttributes {
   updatedAt?: Date;
 }
 
-interface OrderCreationAttributes extends Optional<OrderAttributes, 'id' | 'status' | 'createdAt' | 'updatedAt'> {}
+interface OrderCreationAttributes
+  extends Optional<OrderAttributes, 'id' | 'status' | 'createdAt' | 'updatedAt'> {
+  // Creation attributes
+}
 
 class Order extends Model<OrderAttributes, OrderCreationAttributes> implements OrderAttributes {
   public id!: string;

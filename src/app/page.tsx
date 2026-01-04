@@ -78,17 +78,17 @@ const productCards = [
 
 const MotionBox = motion(Box);
 const MotionStack = motion(Stack);
-const MotionSimpleGrid = motion(SimpleGrid);
 
 export default function Home() {
-  const [logoSrc, setLogoSrc] = useState("/Logo_Dark.svg"); // Default to light mode for SSR
+  const [logoSrc, setLogoSrc] = useState("/Logo_Dark.svg");
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const resolvedLogoSrc = useColorModeValue("/Logo_Dark.svg", "/Logo.svg");
   
   useEffect(() => {
-    // Update logo after hydration to match client theme
     setLogoSrc(resolvedLogoSrc);
+  }, [resolvedLogoSrc]);
 
+  useEffect(() => {
     // Show welcome modal on first visit
     const hasVisited = localStorage.getItem("hasVisited");
     if (!hasVisited) {
@@ -97,7 +97,7 @@ export default function Home() {
         localStorage.setItem("hasVisited", "true");
       }, 1000);
     }
-  }, [resolvedLogoSrc]);
+  }, []);
   
   return (
     <Box minH="100vh" className="bg-gradient-to-br from-zinc-50 via-white to-zinc-100 dark:from-black dark:via-zinc-950 dark:to-zinc-900">

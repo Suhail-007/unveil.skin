@@ -1,8 +1,9 @@
 "use client";
 
-import { Box, Button, IconButton, Image, Stack, Text, HStack } from "@chakra-ui/react";
+import { Box, IconButton, Stack, Text } from "@chakra-ui/react";
 import { FiMinus, FiPlus, FiTrash2 } from "react-icons/fi";
 import type { CartItem as CartItemType } from "@/lib/redux/slices/cartSlice";
+import Image from "next/image";
 
 interface CartItemProps {
   item: CartItemType;
@@ -27,7 +28,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
       borderRadius="lg"
       className="bg-zinc-50 dark:bg-zinc-900/50"
     >
-      <HStack gap={4} align="start">
+      <Stack direction="row" gap={4} align="start">
         {item.image && (
           <Box
             w="80px"
@@ -55,8 +56,8 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
             ₹{item.price.toFixed(2)}
           </Text>
 
-          <HStack justify="space-between" mt={2}>
-            <HStack gap={2}>
+          <Stack direction="row" justify="space-between" mt={2}>
+            <Stack direction="row" gap={2}>
               <IconButton
                 size="sm"
                 onClick={handleDecrement}
@@ -79,7 +80,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
               >
                 <FiPlus size={14} />
               </IconButton>
-            </HStack>
+            </Stack>
 
             <IconButton
               size="sm"
@@ -90,9 +91,9 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
             >
               <FiTrash2 size={16} />
             </IconButton>
-          </HStack>
+          </Stack>
         </Stack>
-      </HStack>
+      </Stack>
     </Box>
   );
 }

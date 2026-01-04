@@ -13,7 +13,10 @@ interface ProductAttributes {
   updatedAt?: Date;
 }
 
-interface ProductCreationAttributes extends Optional<ProductAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+interface ProductCreationAttributes
+  extends Optional<ProductAttributes, 'id' | 'createdAt' | 'updatedAt'> {
+  // Creation attributes
+}
 
 class Product extends Model<ProductAttributes, ProductCreationAttributes> implements ProductAttributes {
   public id!: string;

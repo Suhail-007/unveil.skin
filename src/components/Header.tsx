@@ -16,7 +16,7 @@ export default function Header() {
   const [cartOpen, setCartOpen] = useState(false);
   const resolvedLogoSrc = useColorModeValue("/Logo_Dark.svg", "/Logo.svg");
   const dispatch = useAppDispatch();
-  const { isGuest, loading } = useAppSelector((state) => state.auth);
+  const { loading } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     setLogoSrc(resolvedLogoSrc);
