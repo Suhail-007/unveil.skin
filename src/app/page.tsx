@@ -19,6 +19,8 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import WaitlistForm from "@/components/WaitlistForm";
+import Header from "@/components/Header";
+import AuthModal from "@/components/auth/AuthModal";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 24 },
@@ -80,31 +82,26 @@ const MotionSimpleGrid = motion(SimpleGrid);
 
 export default function Home() {
   const [logoSrc, setLogoSrc] = useState("/Logo_Dark.svg"); // Default to light mode for SSR
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const resolvedLogoSrc = useColorModeValue("/Logo_Dark.svg", "/Logo.svg");
   
   useEffect(() => {
     // Update logo after hydration to match client theme
     setLogoSrc(resolvedLogoSrc);
+
+    // Show welcome modal on first visit
+    const hasVisited = localStorage.getItem("hasVisited");
+    if (!hasVisited) {
+      setTimeout(() => {
+        setShowWelcomeModal(true);
+        localStorage.setItem("hasVisited", "true");
+      }, 1000);
+    }
   }, [resolvedLogoSrc]);
   
   return (
     <Box minH="100vh" className="bg-gradient-to-br from-zinc-50 via-white to-zinc-100 dark:from-black dark:via-zinc-950 dark:to-zinc-900">
-      {/* Header */}
-      <Box as="header" borderBottom="1px" className="border-zinc-200 dark:border-zinc-800">
-        <Container maxW="7xl" px={{ base: 4, md: 6 }} py={6}>
-          <Link href="/">
-            <Image
-              src={logoSrc}
-              alt="unveil.skin"
-              width={360}
-              height={106}
-              priority
-              style={{ height: '64px', width: 'auto' }}
-              className="h-16 w-auto"
-            />
-          </Link>
-        </Container>
-      </Box>
+      <Header />
 
       {/* Hero Section */}
       <Box as="main" maxW="7xl" mx="auto" px={{ base: 4, md: 6 }} py={{ base: 12, md: 20 }}>
@@ -422,6 +419,12 @@ export default function Home() {
           </Stack>
         </Container>
       </MotionBox>
+
+      <AuthModal
+        open={showWelcomeModal}
+        onClose={() => setShowWelcomeModal(false)}
+        allowGuest={true}
+      />
     </Box>
   );
 }

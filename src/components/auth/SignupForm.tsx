@@ -8,7 +8,6 @@ import {
   Input,
   Stack,
   Text,
-  Field,
 } from "@chakra-ui/react";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setSession } from "@/lib/redux/slices/authSlice";
@@ -87,7 +86,10 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
           </Box>
         )}
 
-        <Field label="Name">
+        <Box>
+          <Text fontSize="sm" fontWeight="medium" mb={2} className="text-black dark:text-white">
+            Name
+          </Text>
           <Input
             type="text"
             value={name}
@@ -95,9 +97,12 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
             placeholder="Your name"
             disabled={loading}
           />
-        </Field>
+        </Box>
 
-        <Field label="Email" required>
+        <Box>
+          <Text fontSize="sm" fontWeight="medium" mb={2} className="text-black dark:text-white">
+            Email
+          </Text>
           <Input
             type="email"
             value={email}
@@ -106,9 +111,12 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
             required
             disabled={loading}
           />
-        </Field>
+        </Box>
 
-        <Field label="Password" required>
+        <Box>
+          <Text fontSize="sm" fontWeight="medium" mb={2} className="text-black dark:text-white">
+            Password
+          </Text>
           <Input
             type="password"
             value={password}
@@ -117,9 +125,12 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
             required
             disabled={loading}
           />
-        </Field>
+        </Box>
 
-        <Field label="Confirm Password" required>
+        <Box>
+          <Text fontSize="sm" fontWeight="medium" mb={2} className="text-black dark:text-white">
+            Confirm Password
+          </Text>
           <Input
             type="password"
             value={confirmPassword}
@@ -128,7 +139,7 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
             required
             disabled={loading}
           />
-        </Field>
+        </Box>
 
         <Button
           type="submit"

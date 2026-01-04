@@ -8,7 +8,6 @@ import {
   Input,
   Stack,
   Text,
-  Field,
 } from "@chakra-ui/react";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setSession } from "@/lib/redux/slices/authSlice";
@@ -96,7 +95,10 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
           </Box>
         )}
 
-        <Field label="Email" required>
+        <Box>
+          <Text fontSize="sm" fontWeight="medium" mb={2} className="text-black dark:text-white">
+            Email
+          </Text>
           <Input
             type="email"
             value={email}
@@ -105,9 +107,12 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
             required
             disabled={loading}
           />
-        </Field>
+        </Box>
 
-        <Field label="Password" required>
+        <Box>
+          <Text fontSize="sm" fontWeight="medium" mb={2} className="text-black dark:text-white">
+            Password
+          </Text>
           <Input
             type="password"
             value={password}
@@ -116,7 +121,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
             required
             disabled={loading}
           />
-        </Field>
+        </Box>
 
         <Button
           type="submit"

@@ -30,14 +30,19 @@ export async function GET() {
     });
 
     // Transform to match frontend cart item structure
-    const formattedItems = cartItems.map((item) => ({
-      id: item.id,
-      productId: item.productId,
-      name: item.product?.name || '',
-      price: parseFloat(item.product?.price?.toString() || '0'),
-      quantity: item.quantity,
-      image: item.product?.image,
-    }));
+    const formattedItems = await Promise.all(
+      cartItems.map(async (item) => {
+        const product = await Product.findByPk(item.productId);
+        return {
+          id: item.id,
+          productId: item.productId,
+          name: product?.name || '',
+          price: parseFloat(product?.price?.toString() || '0'),
+          quantity: item.quantity,
+          image: product?.image,
+        };
+      })
+    );
 
     return NextResponse.json(
       {

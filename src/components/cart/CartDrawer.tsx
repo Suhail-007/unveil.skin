@@ -2,16 +2,13 @@
 
 import { useEffect } from "react";
 import {
-  DrawerRoot,
-  DrawerBackdrop,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerBody,
-  DrawerFooter,
-  DrawerCloseTrigger,
-} from "@/components/ui/drawer";
-import { Box, Button, Stack, Text, Separator } from "@chakra-ui/react";
+  Box,
+  Button,
+  Stack,
+  Text,
+  Separator,
+  Drawer,
+} from "@chakra-ui/react";
 import CartItem from "./CartItem";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import { setCartItems, updateQuantity, removeFromCart } from "@/lib/redux/slices/cartSlice";
@@ -101,70 +98,72 @@ export default function CartDrawer({ open, onClose, onCheckout }: CartDrawerProp
   };
 
   return (
-    <DrawerRoot open={open} onOpenChange={(e) => !e.open && onClose()} placement="end">
-      <DrawerBackdrop />
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Shopping Cart</DrawerTitle>
-          <DrawerCloseTrigger />
-        </DrawerHeader>
+    <Drawer.Root open={open} onOpenChange={(details) => !details.open && onClose()} placement="end">
+      <Drawer.Backdrop />
+      <Drawer.Positioner>
+        <Drawer.Content>
+          <Drawer.Header>
+            <Drawer.Title>Shopping Cart</Drawer.Title>
+            <Drawer.CloseTrigger />
+          </Drawer.Header>
 
-        <DrawerBody>
-          {items.length === 0 ? (
-            <Box textAlign="center" py={8}>
-              <Text className="text-zinc-500 dark:text-zinc-400">
-                Your cart is empty
-              </Text>
-            </Box>
-          ) : (
-            <Stack gap={4}>
-              {items.map((item) => (
-                <CartItem
-                  key={item.id}
-                  item={item}
-                  onUpdateQuantity={handleUpdateQuantity}
-                  onRemove={handleRemove}
-                />
-              ))}
-            </Stack>
-          )}
-        </DrawerBody>
-
-        {items.length > 0 && (
-          <DrawerFooter>
-            <Stack width="full" gap={4}>
-              <Separator className="border-zinc-200 dark:border-zinc-800" />
-              
-              <Box>
-                <Stack direction="row" justify="space-between" mb={2}>
-                  <Text fontSize="sm" className="text-zinc-600 dark:text-zinc-400">
-                    Items ({itemCount})
-                  </Text>
-                  <Text fontSize="sm" fontWeight="medium">
-                    ₹{total.toFixed(2)}
-                  </Text>
-                </Stack>
-                <Stack direction="row" justify="space-between">
-                  <Text fontWeight="semibold" className="text-black dark:text-white">
-                    Total
-                  </Text>
-                  <Text fontWeight="bold" fontSize="lg" className="text-black dark:text-white">
-                    ₹{total.toFixed(2)}
-                  </Text>
-                </Stack>
+          <Drawer.Body>
+            {items.length === 0 ? (
+              <Box textAlign="center" py={8}>
+                <Text className="text-zinc-500 dark:text-zinc-400">
+                  Your cart is empty
+                </Text>
               </Box>
+            ) : (
+              <Stack gap={4}>
+                {items.map((item) => (
+                  <CartItem
+                    key={item.id}
+                    item={item}
+                    onUpdateQuantity={handleUpdateQuantity}
+                    onRemove={handleRemove}
+                  />
+                ))}
+              </Stack>
+            )}
+          </Drawer.Body>
 
-              <Button
-                size="lg"
-                onClick={handleCheckout}
-                className="bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
-              >
-                Proceed to Checkout
-              </Button>
-            </Stack>
-          </DrawerFooter>
-        )}
-      </DrawerContent>
-    </DrawerRoot>
+          {items.length > 0 && (
+            <Drawer.Footer>
+              <Stack width="full" gap={4}>
+                <Separator className="border-zinc-200 dark:border-zinc-800" />
+                
+                <Box>
+                  <Stack direction="row" justify="space-between" mb={2}>
+                    <Text fontSize="sm" className="text-zinc-600 dark:text-zinc-400">
+                      Items ({itemCount})
+                    </Text>
+                    <Text fontSize="sm" fontWeight="medium">
+                      ₹{total.toFixed(2)}
+                    </Text>
+                  </Stack>
+                  <Stack direction="row" justify="space-between">
+                    <Text fontWeight="semibold" className="text-black dark:text-white">
+                      Total
+                    </Text>
+                    <Text fontWeight="bold" fontSize="lg" className="text-black dark:text-white">
+                      ₹{total.toFixed(2)}
+                    </Text>
+                  </Stack>
+                </Box>
+
+                <Button
+                  size="lg"
+                  onClick={handleCheckout}
+                  className="bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+                >
+                  Proceed to Checkout
+                </Button>
+              </Stack>
+            </Drawer.Footer>
+          )}
+        </Drawer.Content>
+      </Drawer.Positioner>
+    </Drawer.Root>
   );
 }

@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import {
-  DialogRoot,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogBody,
-  DialogBackdrop,
-} from "@/components/ui/dialog";
-import { Box, Button, Stack, Text, Tabs } from "@chakra-ui/react";
+  Box,
+  Button,
+  Stack,
+  Text,
+  Tabs,
+  Dialog,
+} from "@chakra-ui/react";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 import { useAppDispatch } from "@/lib/redux/hooks";
@@ -35,79 +34,82 @@ export default function AuthModal({ open, onClose, allowGuest = true }: AuthModa
   };
 
   return (
-    <DialogRoot open={open} onOpenChange={(e) => !e.open && onClose()}>
-      <DialogBackdrop />
-      <DialogContent maxW="md">
-        <DialogHeader>
-          <DialogTitle>
-            {activeTab === "login" ? "Log In" : "Sign Up"}
-          </DialogTitle>
-        </DialogHeader>
+    <Dialog.Root open={open} onOpenChange={(details) => !details.open && onClose()}>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content maxW="md">
+          <Dialog.Header>
+            <Dialog.Title>
+              {activeTab === "login" ? "Log In" : "Sign Up"}
+            </Dialog.Title>
+            <Dialog.CloseTrigger />
+          </Dialog.Header>
 
-        <DialogBody>
-          <Stack gap={6}>
-            <Tabs.Root
-              value={activeTab}
-              onValueChange={(e) => setActiveTab(e.value)}
-              variant="plain"
-            >
-              <Tabs.List>
-                <Tabs.Trigger value="login">Log In</Tabs.Trigger>
-                <Tabs.Trigger value="signup">Sign Up</Tabs.Trigger>
-              </Tabs.List>
+          <Dialog.Body>
+            <Stack gap={6}>
+              <Tabs.Root
+                value={activeTab}
+                onValueChange={(details) => setActiveTab(details.value)}
+                variant="plain"
+              >
+                <Tabs.List>
+                  <Tabs.Trigger value="login">Log In</Tabs.Trigger>
+                  <Tabs.Trigger value="signup">Sign Up</Tabs.Trigger>
+                </Tabs.List>
 
-              <Box mt={6}>
-                <Tabs.Content value="login">
-                  <LoginForm onSuccess={handleSuccess} />
-                </Tabs.Content>
+                <Box mt={6}>
+                  <Tabs.Content value="login">
+                    <LoginForm onSuccess={handleSuccess} />
+                  </Tabs.Content>
 
-                <Tabs.Content value="signup">
-                  <SignupForm onSuccess={handleSuccess} />
-                </Tabs.Content>
-              </Box>
-            </Tabs.Root>
-
-            {allowGuest && (
-              <>
-                <Box position="relative">
-                  <Box
-                    position="absolute"
-                    top="50%"
-                    left={0}
-                    right={0}
-                    h="1px"
-                    className="bg-zinc-200 dark:bg-zinc-800"
-                  />
-                  <Text
-                    position="relative"
-                    textAlign="center"
-                    fontSize="sm"
-                    px={4}
-                    className="bg-white dark:bg-zinc-950"
-                    display="inline-block"
-                    mx="auto"
-                    width="fit-content"
-                  >
-                    or
-                  </Text>
+                  <Tabs.Content value="signup">
+                    <SignupForm onSuccess={handleSuccess} />
+                  </Tabs.Content>
                 </Box>
+              </Tabs.Root>
 
-                <Button
-                  variant="outline"
-                  onClick={handleGuestContinue}
-                  className="border-zinc-200 dark:border-zinc-800"
-                >
-                  Continue as Guest
-                </Button>
+              {allowGuest && (
+                <>
+                  <Box position="relative">
+                    <Box
+                      position="absolute"
+                      top="50%"
+                      left={0}
+                      right={0}
+                      h="1px"
+                      className="bg-zinc-200 dark:bg-zinc-800"
+                    />
+                    <Text
+                      position="relative"
+                      textAlign="center"
+                      fontSize="sm"
+                      px={4}
+                      className="bg-white dark:bg-zinc-950"
+                      display="inline-block"
+                      mx="auto"
+                      width="fit-content"
+                    >
+                      or
+                    </Text>
+                  </Box>
 
-                <Text fontSize="xs" textAlign="center" className="text-zinc-500">
-                  You can browse and add items to cart without an account
-                </Text>
-              </>
-            )}
-          </Stack>
-        </DialogBody>
-      </DialogContent>
-    </DialogRoot>
+                  <Button
+                    variant="outline"
+                    onClick={handleGuestContinue}
+                    className="border-zinc-200 dark:border-zinc-800"
+                  >
+                    Continue as Guest
+                  </Button>
+
+                  <Text fontSize="xs" textAlign="center" className="text-zinc-500">
+                    You can browse and add items to cart without an account
+                  </Text>
+                </>
+              )}
+            </Stack>
+          </Dialog.Body>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
   );
 }
