@@ -1,23 +1,23 @@
-import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { getSessionFromHeaders } from '@/lib/auth/session';
 
 export async function GET() {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.getSession();
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
+    // Get session from middleware headers
+    const session = await getSessionFromHeaders();
 
     return NextResponse.json(
       {
-        session,
-        user: session?.user || null,
+        session: session.isAuthenticated ? {
+          user: {
+            id: session.userId,
+            email: session.email,
+          },
+        } : null,
+        user: session.isAuthenticated ? {
+          id: session.userId,
+          email: session.email,
+        } : null,
       },
       { status: 200 }
     );

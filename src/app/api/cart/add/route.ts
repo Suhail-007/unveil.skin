@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
-import { CartItem, Product } from '@/lib/sequelize/models';
+import { Product } from '@/lib/models/Product';
+import { CartItem } from '@/lib/models/CartItem';
 
 export async function POST(request: Request) {
   try {

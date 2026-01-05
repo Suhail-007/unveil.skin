@@ -7,6 +7,7 @@ import CartItem from "@/components/cart/CartItem";
 import CheckoutButton from "@/components/cart/CheckoutButton";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import { setCartItems, updateQuantity, removeFromCart } from "@/lib/redux/slices/cartSlice";
+import { updateCartItem, removeCartItem } from "@/lib/services/cart.service";
 
 export default function CartPage() {
   const dispatch = useAppDispatch();
@@ -36,15 +37,8 @@ export default function CartPage() {
       dispatch(updateQuantity({ id, quantity }));
     } else {
       try {
-        const response = await fetch("/api/cart/update", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cartItemId: id, quantity }),
-        });
-
-        if (response.ok) {
-          dispatch(updateQuantity({ id, quantity }));
-        }
+        await updateCartItem({ cartItemId: id, quantity });
+        dispatch(updateQuantity({ id, quantity }));
       } catch (error) {
         console.error("Failed to update cart:", error);
       }
@@ -56,15 +50,8 @@ export default function CartPage() {
       dispatch(removeFromCart(id));
     } else {
       try {
-        const response = await fetch("/api/cart/remove", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cartItemId: id }),
-        });
-
-        if (response.ok) {
-          dispatch(removeFromCart(id));
-        }
+        await removeCartItem({ cartItemId: id });
+        dispatch(removeFromCart(id));
       } catch (error) {
         console.error("Failed to remove from cart:", error);
       }

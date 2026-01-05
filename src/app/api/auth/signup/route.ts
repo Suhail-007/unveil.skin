@@ -21,6 +21,7 @@ export async function POST(request: Request) {
         data: {
           name: name || undefined,
         },
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
       },
     });
 
@@ -28,11 +29,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
+    // Check if email confirmation is required
+    const requiresEmailConfirmation = data.user && !data.session;
+
     return NextResponse.json(
       {
         user: data.user,
         session: data.session,
-        message: 'Signup successful',
+        requiresEmailConfirmation,
+        message: requiresEmailConfirmation 
+          ? 'Please check your email to verify your account' 
+          : 'Signup successful',
       },
       { status: 200 }
     );

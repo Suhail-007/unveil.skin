@@ -13,6 +13,7 @@ import CartItem from "./CartItem";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import { setCartItems, updateQuantity, removeFromCart } from "@/lib/redux/slices/cartSlice";
 import { useRouter } from "next/navigation";
+import { updateCartItem, removeCartItem } from "@/lib/services/cart.service";
 
 interface CartDrawerProps {
   open: boolean;
@@ -51,15 +52,8 @@ export default function CartDrawer({ open, onClose, onCheckout }: CartDrawerProp
     } else {
       // For authenticated users, call API
       try {
-        const response = await fetch("/api/cart/update", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cartItemId: id, quantity }),
-        });
-
-        if (response.ok) {
-          dispatch(updateQuantity({ id, quantity }));
-        }
+        await updateCartItem({ cartItemId: id, quantity });
+        dispatch(updateQuantity({ id, quantity }));
       } catch (error) {
         console.error("Failed to update cart:", error);
       }
@@ -73,15 +67,8 @@ export default function CartDrawer({ open, onClose, onCheckout }: CartDrawerProp
     } else {
       // For authenticated users, call API
       try {
-        const response = await fetch("/api/cart/remove", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cartItemId: id }),
-        });
-
-        if (response.ok) {
-          dispatch(removeFromCart(id));
-        }
+        await removeCartItem({ cartItemId: id });
+        dispatch(removeFromCart(id));
       } catch (error) {
         console.error("Failed to remove from cart:", error);
       }

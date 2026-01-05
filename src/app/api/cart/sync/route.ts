@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
-import { CartItem } from '@/lib/sequelize/models';
-import { Op } from 'sequelize';
+import { CartItem } from '@/lib/models/CartItem';
+import { sequelize } from '@/lib/sequelize';
+import { requireAuth } from '@/lib/auth/session';
 
 export async function POST(request: Request) {
   try {
@@ -14,30 +14,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const supabase = await createClient();
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
-    const userId = session.user.id;
+    // Require authentication - throws 401 if not authenticated
+    const { userId } = await requireAuth();
 
     // Get all product IDs from guest cart
     const productIds = guestCart.map(item => item.productId);
 
     // Fetch all existing cart items in a single query
     const existingCartItems = await CartItem.findAll({
-      where: { 
+      where: {
         userId,
-        productId: {
-          [Op.in]: productIds
-        }
+        productId: productIds,
       },
     });
 
@@ -46,32 +33,25 @@ export async function POST(request: Request) {
       existingCartItems.map(item => [item.productId, item])
     );
 
-    // Prepare bulk operations
-    const itemsToUpdate: CartItem[] = [];
-    const itemsToCreate: { userId: string; productId: string; quantity: number }[] = [];
+    // Use a transaction to ensure atomicity
+    await sequelize.transaction(async (t) => {
+      for (const item of guestCart) {
+        const existingItem = existingItemsMap.get(item.productId);
 
-    for (const item of guestCart) {
-      const existingItem = existingItemsMap.get(item.productId);
-      
-      if (existingItem) {
-        // Update quantity for existing item
-        existingItem.quantity += item.quantity;
-        itemsToUpdate.push(existingItem);
-      } else {
-        // Prepare new item for bulk creation
-        itemsToCreate.push({
-          userId,
-          productId: item.productId,
-          quantity: item.quantity,
-        });
+        if (existingItem) {
+          // Update quantity for existing item
+          existingItem.quantity += item.quantity;
+          await existingItem.save({ transaction: t });
+        } else {
+          // Create new item
+          await CartItem.create({
+            userId,
+            productId: item.productId,
+            quantity: item.quantity,
+          }, { transaction: t });
+        }
       }
-    }
-
-    // Perform bulk operations
-    await Promise.all([
-      ...itemsToUpdate.map(item => item.save()),
-      itemsToCreate.length > 0 ? CartItem.bulkCreate(itemsToCreate) : Promise.resolve(),
-    ]);
+    });
 
     return NextResponse.json(
       { message: 'Cart synced successfully' },

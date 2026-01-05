@@ -1,7 +1,8 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -54,7 +55,20 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getSession()
+  // Verify session and attach to request headers
+  // Use getUser() instead of getSession() for security - it validates with the server
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  // Add session data to request headers for API routes to access
+  if (user) {
+    response.headers.set('x-user-id', user.id)
+    response.headers.set('x-user-email', user.email || '')
+    response.headers.set('x-session-verified', 'true')
+  } else {
+    response.headers.set('x-session-verified', 'false')
+  }
 
   return response
 }

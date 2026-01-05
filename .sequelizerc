@@ -1,0 +1,9 @@
+const path = require('path');
+
+const rootDir = __dirname;
+
+module.exports = {
+  'config': path.resolve(rootDir, 'config', 'config.js'),
+  'models-path': path.resolve(rootDir, 'src', 'lib', 'models'),
+  'migrations-path': path.resolve(rootDir, 'migrations')
+};

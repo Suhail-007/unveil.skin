@@ -12,6 +12,8 @@ import {
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setSession } from "@/lib/redux/slices/authSlice";
 import { setCartItems } from "@/lib/redux/slices/cartSlice";
+import { login, getSession } from "@/lib/services/auth.service";
+import { syncGuestCart, getCart } from "@/lib/services/cart.service";
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -31,17 +33,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Login failed");
-      }
+      const data = await login({ email, password });
 
       // Update Redux with session
       dispatch(setSession({ user: data.user, session: data.session }));
@@ -51,21 +43,14 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       if (guestCart) {
         const guestCartItems = JSON.parse(guestCart);
         if (guestCartItems.length > 0) {
-          await fetch("/api/cart/sync", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ guestCart: guestCartItems }),
-          });
+          await syncGuestCart({ guestCart: guestCartItems });
           localStorage.removeItem("guestCart");
         }
       }
 
       // Fetch user cart
-      const cartResponse = await fetch("/api/cart/get");
-      if (cartResponse.ok) {
-        const cartData = await cartResponse.json();
-        dispatch(setCartItems(cartData.items));
-      }
+      const cartData = await getCart();
+      dispatch(setCartItems(cartData.items));
 
       if (onSuccess) {
         onSuccess();

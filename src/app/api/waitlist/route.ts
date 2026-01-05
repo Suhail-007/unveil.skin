@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { User } from '@/lib/models/User'
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,42 +23,42 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Try to create user, or return existing if already in waitlist
-    try {
-      const user = await prisma.user.upsert({
-        where: { email },
-        update: {
-          updatedAt: new Date(),
-          ...(name && { name }),
-        },
-        create: {
-          email: email.toLowerCase().trim(),
-          ...(name && { name: name.trim() }),
-        },
-      })
+    // Try to find existing user or create new one
+    const normalizedEmail = email.toLowerCase().trim()
+    const existingUser = await User.findOne({ where: { email: normalizedEmail } })
 
+    if (existingUser) {
+      // Update existing user if name is provided
+      if (name) {
+        existingUser.name = name.trim()
+        await existingUser.save()
+      }
+      
       return NextResponse.json(
         { 
           success: true, 
-          message: 'Successfully added to waitlist',
-          user: { email: user.email, name: user.name, createdAt: user.createdAt }
+          message: 'You are already on the waitlist',
+          alreadyExists: true,
+          user: { email: existingUser.email, name: existingUser.name, createdAt: existingUser.createdAt }
         },
         { status: 200 }
       )
-    } catch (error: any) {
-      // Handle unique constraint violation (email already exists)
-      if (error.code === 'P2002') {
-        return NextResponse.json(
-          { 
-            success: true, 
-            message: 'You are already on the waitlist',
-            alreadyExists: true
-          },
-          { status: 200 }
-        )
-      }
-      throw error
     }
+
+    // Create new user
+    const user = await User.create({
+      email: normalizedEmail,
+      ...(name && { name: name.trim() }),
+    })
+
+    return NextResponse.json(
+      { 
+        success: true, 
+        message: 'Successfully added to waitlist',
+        user: { email: user.email, name: user.name, createdAt: user.createdAt }
+      },
+      { status: 200 }
+    )
   } catch (error) {
     console.error('Waitlist submission error:', error)
     return NextResponse.json(

@@ -1,6 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
-import { CartItem } from '@/lib/sequelize/models';
+import { CartItem } from '@/lib/models/CartItem';
+import { requireAuth } from '@/lib/auth/session';
 
 export async function DELETE(request: Request) {
   try {
@@ -13,19 +13,8 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const supabase = await createClient();
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
-    const userId = session.user.id;
+    // Require authentication - throws 401 if not authenticated
+    const { userId } = await requireAuth();
 
     // Find cart item and verify ownership
     const cartItem = await CartItem.findOne({

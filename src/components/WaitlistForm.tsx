@@ -7,6 +7,7 @@ import {
   Button,
   Stack,
 } from "@chakra-ui/react";
+import { joinWaitlist } from "@/lib/services/waitlist.service";
 
 export default function WaitlistForm() {
   const [email, setEmail] = useState("");
@@ -35,19 +36,7 @@ export default function WaitlistForm() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, name: name.trim() || undefined }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to add to waitlist");
-      }
+      await joinWaitlist({ email, name: name.trim() || undefined });
 
       // Save email to localStorage for convenience
       try {
