@@ -1,96 +1,54 @@
-"use client";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { Container, Heading, Text, VStack } from "@chakra-ui/react";
 
-import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Container, Heading, Text, VStack, Spinner, Button } from "@chakra-ui/react";
-import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+export default async function AuthCallbackPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+  const code = params.code as string | undefined;
+  const error = params.error as string | undefined;
+  const errorDescription = params.error_description as string | undefined;
 
-export default function AuthCallbackPage() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [errorMessage, setErrorMessage] = useState('');
+  // Handle error from Supabase
+  if (error) {
+    return (
+      <Container maxW="md" py={20}>
+        <VStack gap={6} align="center">
+          <Text fontSize="5xl">✗</Text>
+          <Heading size="lg">Verification Failed</Heading>
+          <Text color="gray.500" textAlign="center">
+            {errorDescription?.replace(/\+/g, ' ') || 'Verification failed'}
+          </Text>
+        </VStack>
+      </Container>
+    );
+  }
 
-  useEffect(() => {
-    const verifyEmail = async () => {
-      // Check for error parameters first
-      const error = searchParams.get('error');
-      const errorDescription = searchParams.get('error_description');
-      
-      if (error) {
-        setStatus('error');
-        setErrorMessage(errorDescription?.replace(/\+/g, ' ') || 'Verification failed');
-        return;
-      }
+  // Exchange code for session
+  if (code) {
+    const supabase = await createClient();
+    
+    // Use the server-side method to handle the code exchange
+    // This properly handles PKCE flow with cookies
+    await supabase.auth.exchangeCodeForSession(code);
 
-      const token_hash = searchParams.get('token_hash');
-      const type = searchParams.get('type');
+    // After successful exchange, redirect to home
+    // The session will be established in cookies
+    redirect('/');
+  }
 
-      if (token_hash && type) {
-        const supabase = createClient();
-
-        const { error: verifyError } = await supabase.auth.verifyOtp({
-          type: (type || "info") as "info" | "success" | "error" | "warning" | "loading",
-          token_hash,
-        });
-
-        if (!verifyError) {
-          setStatus('success');
-          // Redirect to home after showing success
-          setTimeout(() => {
-            router.push('/');
-          }, 2000);
-        } else {
-          setStatus('error');
-          setErrorMessage(verifyError.message || 'Verification failed');
-        }
-      } else {
-        setStatus('error');
-        setErrorMessage('Invalid verification link');
-      }
-    };
-
-    verifyEmail();
-  }, [searchParams, router]);
-
+  // No code or error - invalid link
   return (
     <Container maxW="md" py={20}>
       <VStack gap={6} align="center">
-        {status === 'loading' && (
-          <>
-            <Spinner size="xl" />
-            <Heading size="lg">Verifying your email...</Heading>
-            <Text color="gray.500">Please wait while we confirm your account.</Text>
-          </>
-        )}
-
-        {status === 'success' && (
-          <>
-            <Text fontSize="5xl">✓</Text>
-            <Heading size="lg">Email Verified!</Heading>
-            <Text color="gray.500">Your account has been successfully verified.</Text>
-            <Text fontSize="sm" color="gray.400">Redirecting you to home...</Text>
-          </>
-        )}
-
-        {status === 'error' && (
-          <>
-            <Text fontSize="5xl">✗</Text>
-            <Heading size="lg">Verification Failed</Heading>
-            <Text color="gray.500" textAlign="center">
-              {errorMessage || 'An error occurred during verification.'}
-            </Text>
-            {errorMessage.includes('expired') && (
-              <Text fontSize="sm" color="gray.400" textAlign="center">
-                Please try signing up again or request a new verification email.
-              </Text>
-            )}
-            <Button asChild colorPalette="blue">
-              <Link href="/signup">Sign Up Again</Link>
-            </Button>
-          </>
-        )}
+        <Text fontSize="5xl">✗</Text>
+        <Heading size="lg">Invalid Link</Heading>
+        <Text color="gray.500" textAlign="center">
+          This verification link is invalid or has expired.
+        </Text>
       </VStack>
     </Container>
   );

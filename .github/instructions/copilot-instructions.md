@@ -2,23 +2,96 @@
 
 Next.js 16 e-commerce app with **Sequelize ORM**, Supabase Auth, Redux, and guest cart support.
 
+## Architecture Principles
+
+### Server Components First (Performance & UX)
+- **Default to Server Components**: All components should be server components unless they require client-side interactivity
+- **Doughnut Pattern**: Extract minimal client-only logic into small, focused client components
+- **Example**: Product page is server component, only "Add to Cart" button is client
+- **Use Suspense**: Wrap async data fetching with `<Suspense>` and provide skeleton fallbacks
+- **Caching Strategy**: 
+  - Use Next.js cache: `fetch(url, { next: { revalidate: 3600 } })`
+  - Server components automatically cached
+  - Use `unstable_cache` for database queries when needed
+- **Streaming**: Use `loading.tsx` files for route-level loading states
+
+### Client Component Guidelines
+- **Mark explicitly**: Use `"use client"` directive only when needed:
+  - Event handlers (onClick, onChange, etc.)
+  - React hooks (useState, useEffect, useContext, etc.)
+  - Browser APIs (localStorage, window, document)
+  - Third-party libraries that require client (framer-motion, chart libraries, etc.)
+- **Keep minimal**: Extract only interactive parts to client components
+- **Lazy load**: Use `next/dynamic` with `ssr: false` for heavy client components
+- **Example Pattern**:
+  ```tsx
+  // page.tsx (Server Component)
+  export default function ProductPage() {
+    const product = await fetchProduct(); // Server-side data fetch
+    return <ProductView product={product} />;
+  }
+  
+  // ProductView.tsx (Server Component)
+  export default function ProductView({ product }) {
+    return (
+      <div>
+        <ProductDetails product={product} />
+        <AddToCartButton productId={product.id} /> {/* Client Component */}
+      </div>
+    );
+  }
+  
+  // AddToCartButton.tsx (Client Component)
+  "use client";
+  export default function AddToCartButton({ productId }) {
+    const [count, setCount] = useState(0);
+    // ... interactive logic
+  }
+  ```
+
 ## Database (Sequelize)
 
-- Models: `src/lib/models/` - all models (User, Product, CartItem, Order, OrderItem)
-- Connection: `import { sequelize } from '@/lib/sequelize'`
-- Import models: `import { User } from '@/lib/models/User'`, `import { Product } from '@/lib/models/Product'`, etc.
+- Models: `src/lib/models/` - all models (Product, CartItem, Order, OrderItem)
+- Connection: `import sequelize from '@/lib/connection'` or `import { sequelize } from '@/lib/models'`
+- **CRITICAL**: Import models from `@/lib/models` index, never from individual files (ensures associations are initialized)
+- **User data is managed by Supabase Auth** - no local User model; `userId` fields are STRING type storing Supabase Auth UUIDs without FK constraints
+- User identification: All `userId` fields reference Supabase Auth user.id (UUID strings)
+
+### Database Schema Changes (Migrations)
+**ALWAYS use Sequelize migrations for any table or association changes:**
+- Migration files: `migrations/` directory
+- Create migration: `npx sequelize-cli migration:generate --name <descriptive-name>`
+- Run migrations: `npx sequelize-cli db:migrate`
+- Rollback: `npx sequelize-cli db:migrate:undo`
+
+**Never modify tables directly** - always create a migration file that can be version-controlled and applied consistently across environments.
+
+Example migration for adding a column:
+```javascript
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.addColumn('products', 'category', {
+      type: Sequelize.STRING,
+      allowNull: true,
+    });
+  },
+  async down(queryInterface) {
+    await queryInterface.removeColumn('products', 'category');
+  },
+};
+```
 
 ### Sequelize Query Patterns
 ```typescript
-// Find with relations
+// Find with relations - use 'as' alias matching model associations
 const cartItems = await CartItem.findAll({
   where: { userId },
-  include: [Product],
+  include: [{ model: Product, as: 'product' }],
 });
 
 // Find one
-const user = await User.findByPk(userId);
 const cartItem = await CartItem.findOne({ where: { id, userId } });
+const product = await Product.findByPk(productId);
 
 // Create
 await CartItem.create({ userId, productId, quantity });
@@ -64,8 +137,13 @@ const { userId, email } = await requireAuth();
 ```
 
 ## API Route Structure
-See [src/app/api/cart/add/route.ts](src/app/api/cart/add/route.ts) for canonical pattern:
-1. Extract body → 2. Get session from headers via helper → 3. If authenticated: Sequelize DB ops, else: return product data → 4. Client handles Redux + localStorage.
+The cart API uses a single consolidated route at `/api/cart` with HTTP methods:
+- `GET` - Fetch cart items (authenticated users only)
+- `POST` - Add item to cart (supports guest mode)
+- `PATCH` - Update cart item quantity (authenticated users only)
+- `DELETE` - Remove cart item (authenticated users only)
+
+Pattern: Extract body → Get session from headers via helper → If authenticated: Sequelize DB ops, else: return product data → Client handles Redux + localStorage.
 
 ## Service Layer Pattern
 All API calls go through service files in `src/lib/services/`. Each service has:
@@ -106,6 +184,21 @@ npm run build            # Production build
 - All interactive components: `"use client"` directive (Redux requires client-side).
 - Font: Montserrat ([src/app/layout.tsx](src/app/layout.tsx)).
 
+## Component Organization
+**Keep page components minimal** - only import and render the main page component:
+- Page routes (`src/app/**/page.tsx`): Should only import and render the main component
+- Page-specific components: Create in `src/components/pages/<route-name>/`
+- Sub-components for a page: Place in `src/components/pages/<route-name>/components/`
+- Example structure:
+  ```
+  src/app/orders/page.tsx              → imports OrdersPageContent
+  src/components/pages/orders/
+    OrdersPageContent.tsx              → main page component
+    components/
+      OrderCard.tsx                    → page-specific sub-component
+      OrderSkeleton.tsx                → page-specific loading component
+  ```
+
 ## Loading States & Skeleton UI
 **Always use Skeleton loading for server-fetched data**:
 - When fetching data from APIs, show Chakra UI `<Skeleton>` components for the specific data being loaded
@@ -126,8 +219,10 @@ npm run build            # Production build
 
 ## Key Files
 - Sequelize models: [src/lib/models/](src/lib/models/)
-- Sequelize connection: [src/lib/sequelize.ts](src/lib/sequelize.ts)
+- Sequelize connection: [src/lib/connection.ts](src/lib/connection.ts)
+- Models index/loader: [src/lib/models/index.ts](src/lib/models/index.ts)
 - **Service layer**: [src/lib/services/](src/lib/services/) - all API calls with route constants
 - **Session helpers**: [src/lib/auth/session.ts](src/lib/auth/session.ts) - `getSessionFromHeaders()`, `requireAuth()`
+- Cart API: [src/app/api/cart/route.ts](src/app/api/cart/route.ts) - consolidated GET/POST/PATCH/DELETE
 - Guest → auth cart merge: [src/app/api/cart/sync/route.ts](src/app/api/cart/sync/route.ts)
-- Session middleware: [src/middleware.ts](src/middleware.ts) - verifies session and attaches headers
+- Session proxy: [src/proxy.ts](src/proxy.ts) - verifies session and attaches headers

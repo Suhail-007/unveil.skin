@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next';
 import Provider from '../components/providers/provider';
 import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import './globals.css';
 
 const montserrat = Montserrat({
@@ -116,6 +117,7 @@ export default function RootLayout({
         <Provider>
           <Header />
           {children}
+          <Footer />
           <Toaster />
         </Provider>
         <Analytics />

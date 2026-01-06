@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { CartItem } from '@/lib/models/CartItem';
-import { sequelize } from '@/lib/sequelize';
+import { CartItem, sequelize } from '@/lib/models';
 import { requireAuth } from '@/lib/auth/session';
 
 export async function POST(request: Request) {

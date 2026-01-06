@@ -11,12 +11,7 @@ module.exports = {
       user_id: {
         type: Sequelize.STRING,
         allowNull: false,
-        references: {
-          model: 'users',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+        comment: 'Supabase Auth user UUID - no FK constraint',
       },
       total: {
         type: Sequelize.DECIMAL(10, 2),

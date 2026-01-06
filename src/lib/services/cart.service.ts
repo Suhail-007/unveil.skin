@@ -6,10 +6,7 @@ import type { CartItem } from '@/lib/redux/slices/cartSlice';
 
 // Route constants
 export const CART_ROUTES = {
-  GET: '/api/cart/get',
-  ADD: '/api/cart/add',
-  UPDATE: '/api/cart/update',
-  REMOVE: '/api/cart/remove',
+  BASE: '/api/cart',
   SYNC: '/api/cart/sync',
 } as const;
 
@@ -39,7 +36,7 @@ export interface SyncCartParams {
 
 // API Functions
 export async function getCart(): Promise<CartResponse> {
-  const response = await fetch(CART_ROUTES.GET);
+  const response = await fetch(CART_ROUTES.BASE);
 
   if (!response.ok) {
     const data = await response.json();
@@ -50,7 +47,7 @@ export async function getCart(): Promise<CartResponse> {
 }
 
 export async function addToCart(params: AddToCartParams): Promise<{ cartItem?: unknown; product?: unknown; message: string }> {
-  const response = await fetch(CART_ROUTES.ADD, {
+  const response = await fetch(CART_ROUTES.BASE, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
@@ -66,8 +63,8 @@ export async function addToCart(params: AddToCartParams): Promise<{ cartItem?: u
 }
 
 export async function updateCartItem(params: UpdateCartParams): Promise<{ success: boolean }> {
-  const response = await fetch(CART_ROUTES.UPDATE, {
-    method: 'PUT',
+  const response = await fetch(CART_ROUTES.BASE, {
+    method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
   });
@@ -81,7 +78,7 @@ export async function updateCartItem(params: UpdateCartParams): Promise<{ succes
 }
 
 export async function removeCartItem(params: RemoveFromCartParams): Promise<{ success: boolean }> {
-  const response = await fetch(CART_ROUTES.REMOVE, {
+  const response = await fetch(CART_ROUTES.BASE, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
