@@ -2,6 +2,7 @@
   "name": "unveil.skin",
   "version": "0.1.0",
   "private": true,
+
   "scripts": {
     "dev": "bun run --bun next dev --turbopack",
     "build": "bun run --bun next build",

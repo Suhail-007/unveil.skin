@@ -11,3 +11,6 @@ export * from './cart.service';
 
 // Waitlist Service
 export * from './waitlist.service';
+
+// Admin Service
+export * from './admin.service';

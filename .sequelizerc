@@ -5,5 +5,6 @@ const rootDir = __dirname;
 module.exports = {
   'config': path.resolve(rootDir, 'config', 'config.js'),
   'models-path': path.resolve(rootDir, 'src', 'lib', 'models'),
-  'migrations-path': path.resolve(rootDir, 'migrations')
+  'migrations-path': path.resolve(rootDir, 'migrations'),
+  'seeders-path': path.resolve(rootDir, 'seeders')
 };

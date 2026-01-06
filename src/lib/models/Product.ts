@@ -27,6 +27,11 @@ class Product extends Model<
   declare image: CreationOptional<string | null>;
   declare slug: string;
   declare stock: number;
+  declare category: CreationOptional<string | null>;
+  declare is_active: CreationOptional<boolean>;
+  declare benefits: CreationOptional<any[] | null>;
+  declare how_to_use: CreationOptional<any[] | null>;
+  declare dermatologist_notes: CreationOptional<any[] | null>;
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
 
@@ -82,6 +87,27 @@ Product.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
+    },
+    category: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    is_active: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
+    benefits: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+    },
+    how_to_use: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+    },
+    dermatologist_notes: {
+      type: DataTypes.JSONB,
+      allowNull: true,
     },
     created_at: {
       type: DataTypes.DATE,
