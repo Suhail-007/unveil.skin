@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import Provider from '../components/providers/provider';
+import AuthErrorBoundary from '@/components/auth/AuthErrorBoundary';
 import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -115,10 +116,12 @@ export default function RootLayout({
     <html lang='en' suppressHydrationWarning>
       <body className={`${montserrat.variable} antialiased`}>
         <Provider>
-          <Header />
-          {children}
-          <Footer />
-          <Toaster />
+          <AuthErrorBoundary>
+            <Header />
+            {children}
+            <Footer />
+            <Toaster />
+          </AuthErrorBoundary>
         </Provider>
         <Analytics />
       </body>

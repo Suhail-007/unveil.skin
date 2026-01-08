@@ -24,14 +24,17 @@ class Product extends Model<
   declare name: string;
   declare description: CreationOptional<string | null>;
   declare price: string;
-  declare image: CreationOptional<string | null>;
+  declare images: CreationOptional<{ isMain: boolean; url: string }[] | null>;
+  declare videos: CreationOptional<{ isMain: boolean; url: string }[] | null>;
   declare slug: string;
   declare stock: number;
   declare category: CreationOptional<string | null>;
   declare is_active: CreationOptional<boolean>;
-  declare benefits: CreationOptional<any[] | null>;
-  declare how_to_use: CreationOptional<any[] | null>;
-  declare dermatologist_notes: CreationOptional<any[] | null>;
+  declare benefits: CreationOptional<Record<string, string> | null>;
+  declare how_to_use: CreationOptional<Record<string, string> | null>;
+  declare dermatologist_notes: CreationOptional<Record<string, string> | null>;
+  declare content_markdown: CreationOptional<string | null>;
+  declare details_description: CreationOptional<string | null>;
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
 
@@ -74,8 +77,12 @@ Product.init(
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
-    image: {
-      type: DataTypes.STRING,
+    images: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+    },
+    videos: {
+      type: DataTypes.JSONB,
       allowNull: true,
     },
     slug: {
@@ -107,6 +114,14 @@ Product.init(
     },
     dermatologist_notes: {
       type: DataTypes.JSONB,
+      allowNull: true,
+    },
+    content_markdown: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    details_description: {
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     created_at: {

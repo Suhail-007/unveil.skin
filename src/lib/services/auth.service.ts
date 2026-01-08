@@ -10,6 +10,7 @@ export const AUTH_ROUTES = {
   SIGNUP: '/api/auth/signup',
   LOGOUT: '/api/auth/logout',
   SESSION: '/api/auth/session',
+  REFRESH: '/api/auth/refresh',
 } as const;
 
 // Types
@@ -79,4 +80,18 @@ export async function logout(): Promise<void> {
 export async function getSession(): Promise<AuthResponse> {
   const response = await fetch(AUTH_ROUTES.SESSION);
   return response.json();
+}
+
+export async function refreshSession(): Promise<AuthResponse> {
+  const response = await fetch(AUTH_ROUTES.REFRESH, {
+    method: 'POST',
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Session refresh failed');
+  }
+
+  return data;
 }

@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { addToCart as addToCartAction, updateQuantity, removeFromCart } from "@/lib/redux/slices/cartSlice";
 import { addToCart as addToCartAPI, updateCartItem, removeCartItem } from "@/lib/services/cart.service";
 import type { CartItem } from "@/lib/redux/slices/cartSlice";
+import { toaster } from "@/components/ui/toaster";
 
 interface AddToCartButtonProps {
   productId: string;
@@ -56,15 +57,47 @@ export default function AddToCartButton({
           image: productImage,
         };
         dispatch(addToCartAction(newItem));
+        
+        toaster.create({
+          title: "Added to cart",
+          description: `${productName} has been added to your cart`,
+          type: "success",
+          duration: 2000,
+        });
       } else {
-        // Authenticated: Call API
+        // Authenticated: Call API with auth handling
         const response = await addToCartAPI({ productId, quantity: 1 });
         
-        // Refresh cart from API or update Redux based on response
+        // Update Redux with the response
         if (response.cartItem) {
-          // If API returns the cart item, update Redux
-          dispatch(addToCartAction(response.cartItem as CartItem));
+          const cartItem = response.cartItem as CartItem & { productId: string };
+          dispatch(addToCartAction({
+            id: cartItem.id,
+            productId: cartItem.productId,
+            name: productName,
+            price: productPrice,
+            quantity: cartItem.quantity,
+            image: productImage,
+          }));
+        } else if (response.product) {
+          // Guest response format
+          const product = response.product as { id: string; name: string; price: number; image: string | null };
+          dispatch(addToCartAction({
+            id: `temp-${Date.now()}`,
+            productId: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: 1,
+            image: product.image || undefined,
+          }));
         }
+        
+        toaster.create({
+          title: "Added to cart",
+          description: `${productName} has been added to your cart`,
+          type: "success",
+          duration: 2000,
+        });
       }
       
       if (onAddToCart) {
@@ -72,6 +105,12 @@ export default function AddToCartButton({
       }
     } catch (error) {
       console.error('Failed to add to cart:', error);
+      toaster.create({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to add item to cart",
+        type: "error",
+        duration: 3000,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -94,6 +133,12 @@ export default function AddToCartButton({
       }
     } catch (error) {
       console.error('Failed to update cart:', error);
+      toaster.create({
+        title: "Error",
+        description: "Failed to update cart quantity",
+        type: "error",
+        duration: 3000,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -114,6 +159,13 @@ export default function AddToCartButton({
           await removeCartItem({ cartItemId: existingItem.id });
           dispatch(removeFromCart(existingItem.id));
         }
+        
+        toaster.create({
+          title: "Removed from cart",
+          description: `${productName} has been removed from your cart`,
+          type: "info",
+          duration: 2000,
+        });
       } else {
         // Update quantity
         if (isGuest) {
@@ -125,6 +177,12 @@ export default function AddToCartButton({
       }
     } catch (error) {
       console.error('Failed to update cart:', error);
+      toaster.create({
+        title: "Error",
+        description: "Failed to update cart quantity",
+        type: "error",
+        duration: 3000,
+      });
     } finally {
       setIsLoading(false);
     }

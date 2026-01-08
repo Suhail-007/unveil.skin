@@ -7,18 +7,10 @@ import {
   Box,
   HStack,
   Button,
-  Text,
 } from '@chakra-ui/react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useColorModeValue } from '@/components/ui/color-mode';
-import { Avatar } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import UserDropdown from './UserDropdown';
 import CartIcon from './cart/CartIcon';
 import CartDrawer from './cart/CartDrawer';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
@@ -26,7 +18,7 @@ import { setSession, setGuest, clearSession } from '@/lib/redux/slices/authSlice
 import { setCartItems } from '@/lib/redux/slices/cartSlice';
 import { getSession, logout } from '@/lib/services/auth.service';
 import { getCart } from '@/lib/services/cart.service';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const [logoSrc, setLogoSrc] = useState('/Logo_Dark.svg');
@@ -128,40 +120,11 @@ export default function Header() {
                     </Button>
                   </>
                 ) : (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800">
-                        <Avatar size='sm' name={getUserDisplayName()} />
-                        <Text fontSize='sm' fontWeight='medium' display={{ base: 'none', md: 'block' }}>
-                          {getUserDisplayName()}
-                        </Text>
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link href='/profile'>
-                          My Profile
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href='/orders'>
-                          My Orders
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href='/cart'>
-                          View My Cart
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem 
-                        className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20"
-                        onClick={handleLogout}
-                      >
-                        Logout
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <UserDropdown
+                    userName={getUserDisplayName()}
+                    userEmail={user?.email}
+                    onLogout={handleLogout}
+                  />
                 )}
                 <CartIcon onClick={() => setCartOpen(true)} />
               </HStack>
