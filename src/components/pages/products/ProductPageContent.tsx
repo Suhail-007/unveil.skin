@@ -119,66 +119,115 @@ export default function ProductPageContent({ product }: ProductPageContentProps)
               productImage={mainImage}
             />
 
-            {product.benefits && Object.keys(product.benefits).length > 0 && (
+            {product.benefits && Object.keys(product.benefits).filter(([key]) => !key.toLowerCase().startsWith('additional')).length > 0 && (
               <Box borderTop="1px solid" borderColor="gray.200" _dark={{ borderColor: "gray.700" }} pt={6}>
                 <Heading as="h3" fontSize="lg" fontWeight="semibold" mb={4}>
                   Benefits
                 </Heading>
-                <Stack gap={3}>
-                  {Object.entries(product.benefits).map(([key, value]) => (
-                    <AnimatedBenefit key={key}>
-                      <Text fontWeight="medium">{key}</Text>
-                      <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.400" }}>
-                        {value}
-                      </Text>
-                    </AnimatedBenefit>
-                  ))}
-                </Stack>
+                <SimpleGrid columns={{ base: 1, sm: 2 }} gap={6}>
+                  {Object.entries(product.benefits)
+                    .filter(([key]) => !key.toLowerCase().startsWith('additional'))
+                    .map(([key, value]) => (
+                      <AnimatedBenefit key={key}>
+                        <Text fontWeight="semibold" mb={1}>{key}</Text>
+                        <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.400" }}>
+                          {value}
+                        </Text>
+                      </AnimatedBenefit>
+                    ))}
+                </SimpleGrid>
               </Box>
             )}
           </Stack>
         </AnimatedDetails>
       </AnimatedProductGrid>
 
-      {/* How to Use Section */}
-      {product.how_to_use && Object.keys(product.how_to_use).length > 0 && (
+      {/* How to Use & Dermatologist Notes Section */}
+      {(product.how_to_use || product.dermatologist_notes) && (
         <Box mt={16}>
-          <Heading as="h2" fontSize="2xl" fontWeight="bold" mb={6}>
-            How to Use
-          </Heading>
-          <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
-            {Object.entries(product.how_to_use)
-              .filter(([key]) => !key.toLowerCase().startsWith('additional'))
-              .map(([step, instruction]) => (
-                <Box key={step} p={6} borderRadius="xl" className="bg-gray-50 dark:bg-gray-900">
-                  <Text fontWeight="semibold" mb={2}>{step}</Text>
-                  <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.400" }}>
-                    {instruction}
-                  </Text>
-                </Box>
-              ))}
-          </SimpleGrid>
-        </Box>
-      )}
+          <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6}>
+            {/* How to use card */}
+            {product.how_to_use && Object.keys(product.how_to_use).filter(([key]) => !key.toLowerCase().startsWith('additional')).length > 0 && (
+              <Box p={6} borderRadius="xl" bg="gray.900" _dark={{ bg: "gray.900" }}>
+                <HStack gap={3} mb={4}>
+                  <Box flexShrink={0}>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="2" className="text-blue-500"/>
+                      <path d="M10 6v4m0 4h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-blue-500"/>
+                    </svg>
+                  </Box>
+                  <Heading as="h2" fontSize="lg" fontWeight="bold" color="white">
+                    How to use
+                  </Heading>
+                </HStack>
+                <Stack gap={4}>
+                  {Object.entries(product.how_to_use)
+                    .filter(([key]) => !key.toLowerCase().startsWith('additional'))
+                    .map(([step, instruction]) => {
+                      const stepNumber = step.match(/^\d+/)?.[0];
+                      return (
+                        <HStack key={step} align="start" gap={3}>
+                          {stepNumber && (
+                            <Box
+                              flexShrink={0}
+                              w={6}
+                              h={6}
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                              fontWeight="bold"
+                              fontSize="sm"
+                              color="gray.400"
+                            >
+                              {stepNumber}
+                            </Box>
+                          )}
+                          <Text fontSize="sm" color="gray.300">
+                            {instruction}
+                          </Text>
+                        </HStack>
+                      );
+                    })}
+                </Stack>
+              </Box>
+            )}
 
-      {/* Dermatologist Notes */}
-      {product.dermatologist_notes && Object.keys(product.dermatologist_notes).length > 0 && (
-        <Box mt={12}>
-          <Heading as="h2" fontSize="2xl" fontWeight="bold" mb={6}>
-            Dermatologist Notes
-          </Heading>
-          <Stack gap={4}>
-            {Object.entries(product.dermatologist_notes)
-              .filter(([key]) => !key.toLowerCase().startsWith('additional'))
-              .map(([title, note]) => (
-                <Box key={title} p={4} borderLeft="3px solid" borderColor="blue.500" className="bg-blue-50 dark:bg-blue-900/20">
-                  <Text fontWeight="medium" mb={1}>{title}</Text>
-                  <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.400" }}>
-                    {note}
-                  </Text>
-                </Box>
-              ))}
-          </Stack>
+            {/* Dermatologist notes card */}
+            {product.dermatologist_notes && Object.keys(product.dermatologist_notes).filter(([key]) => !key.toLowerCase().startsWith('additional')).length > 0 && (
+              <Box p={6} borderRadius="xl" bg="gray.900" _dark={{ bg: "gray.900" }}>
+                <HStack gap={3} mb={4}>
+                  <Box flexShrink={0}>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="2" className="text-red-500"/>
+                      <path d="M10 6v4m0 4h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-red-500"/>
+                    </svg>
+                  </Box>
+                  <Heading as="h2" fontSize="lg" fontWeight="bold" color="white">
+                    Dermatologist notes
+                  </Heading>
+                </HStack>
+                <Stack gap={3}>
+                  {Object.entries(product.dermatologist_notes)
+                    .filter(([key]) => !key.toLowerCase().startsWith('additional'))
+                    .map(([title, note]) => (
+                      <HStack key={title} align="start" gap={3}>
+                        <Box flexShrink={0} mt={0.5}>
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="text-green-500">
+                            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                          </svg>
+                        </Box>
+                        <Text fontSize="sm" color="gray.300">
+                          {note}
+                        </Text>
+                      </HStack>
+                    ))}
+                </Stack>
+                <Text fontSize="xs" mt={4} color="gray.500">
+                  Cosmetic product. Reapply for continued protection.
+                </Text>
+              </Box>
+            )}
+          </SimpleGrid>
         </Box>
       )}
 
@@ -202,18 +251,18 @@ export default function ProductPageContent({ product }: ProductPageContentProps)
           Object.entries(additionalSections).map(([sectionKey, sectionData]) => (
             <Box key={sectionKey} mt={12}>
               <Heading as="h2" fontSize="2xl" fontWeight="bold" mb={6}>
-                {sectionKey.replace(/additional\d*/i, '').trim() || 'Additional Information'}
+                {sectionKey.replace(/additional\d*/i, '').trim() || 'What makes it work'}
               </Heading>
-              <Stack gap={4}>
+              <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={6}>
                 {Object.entries(sectionData).map(([title, content]) => (
-                  <Box key={title} p={4} borderRadius="lg" className="bg-gray-50 dark:bg-gray-900">
-                    <Text fontWeight="medium" mb={1}>{title}</Text>
+                  <Box key={title}>
+                    <Text fontWeight="semibold" mb={2}>{title}</Text>
                     <Text fontSize="sm" color="gray.600" _dark={{ color: "gray.400" }}>
                       {content}
                     </Text>
                   </Box>
                 ))}
-              </Stack>
+              </SimpleGrid>
             </Box>
           ))
         );
