@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import {
   Box,
   HStack,
@@ -25,9 +26,14 @@ export default function Header() {
   const [cartOpen, setCartOpen] = useState(false);
   const resolvedLogoSrc = useColorModeValue('/Logo_Dark.svg', '/Logo.svg');
   const dispatch = useAppDispatch();
+  const pathname = usePathname();
 
   const router = useRouter();
   const { user, loading, isGuest } = useAppSelector(state => state.auth);
+
+  // Create login/signup URLs with current page as return URL
+  const loginUrl = `/login?return_url=${encodeURIComponent(pathname)}`;
+  const signupUrl = `/signup?return_url=${encodeURIComponent(pathname)}`;
 
   useEffect(() => {
     setLogoSrc(resolvedLogoSrc);
@@ -37,9 +43,12 @@ export default function Header() {
   useEffect(() => {
     const initAuth = async () => {
       try {
+        console.log('🔄 Initializing auth...');
         const data = await getSession();
+        console.log('📦 Session data:', data);
 
         if (data.session && data.user) {
+          console.log('✅ User authenticated:', data.user.email);
           dispatch(setSession({ user: data.user, session: data.session }));
 
           // Load user cart
@@ -50,6 +59,7 @@ export default function Header() {
             // Cart fetch failed, ignore
           }
         } else {
+          console.log('👤 Guest user');
           dispatch(setGuest());
 
           // Load guest cart from localStorage
@@ -62,7 +72,7 @@ export default function Header() {
           }
         }
       } catch (error) {
-        console.error('Auth initialization error:', error);
+        console.error('❌ Auth initialization error:', error);
         dispatch(setGuest());
       }
     };
@@ -113,10 +123,10 @@ export default function Header() {
                 {isGuest ? (
                   <>
                     <Button asChild variant='ghost' size='sm'>
-                      <Link href='/login'>Login</Link>
+                      <Link href={loginUrl}>Login</Link>
                     </Button>
                     <Button asChild colorPalette='blue' size='sm'>
-                      <Link href='/signup'>Sign Up</Link>
+                      <Link href={signupUrl}>Sign Up</Link>
                     </Button>
                   </>
                 ) : (

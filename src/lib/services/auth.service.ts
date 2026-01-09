@@ -78,8 +78,12 @@ export async function logout(): Promise<void> {
 }
 
 export async function getSession(): Promise<AuthResponse> {
-  const response = await fetch(AUTH_ROUTES.SESSION);
-  return response.json();
+  const response = await fetch(AUTH_ROUTES.SESSION, {
+    credentials: 'include', // Important: include cookies
+  });
+  const data = await response.json();
+  console.log('📱 getSession response:', data);
+  return data;
 }
 
 export async function refreshSession(): Promise<AuthResponse> {

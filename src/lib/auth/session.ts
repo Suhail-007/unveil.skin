@@ -13,6 +13,15 @@ export interface SessionData {
 export async function getSessionFromHeaders(): Promise<SessionData> {
   const headersList = await headers();
   const isVerified = headersList.get('x-session-verified') === 'true';
+  const userId = headersList.get('x-user-id');
+  const email = headersList.get('x-user-email');
+  
+  console.log('🔐 Session Headers:', {
+    isVerified,
+    userId,
+    email,
+    allHeaders: Array.from(headersList.entries()).filter(([key]) => key.startsWith('x-'))
+  });
   
   if (!isVerified) {
     return {
@@ -23,8 +32,8 @@ export async function getSessionFromHeaders(): Promise<SessionData> {
   }
 
   return {
-    userId: headersList.get('x-user-id'),
-    email: headersList.get('x-user-email'),
+    userId,
+    email,
     isAuthenticated: true,
   };
 }
@@ -35,13 +44,20 @@ export async function getSessionFromHeaders(): Promise<SessionData> {
 export async function requireAuth(): Promise<{ userId: string; email: string }> {
   const session = await getSessionFromHeaders();
   
+  console.log('🔒 RequireAuth check:', { 
+    isAuthenticated: session.isAuthenticated, 
+    hasUserId: !!session.userId 
+  });
+  
   if (!session.isAuthenticated || !session.userId) {
+    console.error('❌ Authentication failed - throwing 401');
     throw new Response(
       JSON.stringify({ error: 'Authentication required' }),
       { status: 401, headers: { 'Content-Type': 'application/json' } }
     );
   }
 
+  console.log('✅ Authentication successful:', session.userId);
   return {
     userId: session.userId,
     email: session.email || '',

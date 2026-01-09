@@ -1,23 +1,35 @@
 import { NextResponse } from 'next/server';
-import { getSessionFromHeaders } from '@/lib/auth/session';
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET() {
   try {
-    // Get session from middleware headers
-    const session = await getSessionFromHeaders();
+    const supabase = await createClient();
+    
+    // Use getUser() instead of getSession() for security - it validates with the server
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    if (error) {
+      console.error('Session error:', error);
+      return NextResponse.json(
+        { session: null, user: null },
+        { status: 200 }
+      );
+    }
+
+    // If we have a user, construct a minimal session object
+    const session = user ? {
+      user,
+      access_token: '', // Not exposing tokens to client
+      refresh_token: '',
+      expires_at: 0,
+      expires_in: 0,
+      token_type: 'bearer'
+    } : null;
 
     return NextResponse.json(
       {
-        session: session.isAuthenticated ? {
-          user: {
-            id: session.userId,
-            email: session.email,
-          },
-        } : null,
-        user: session.isAuthenticated ? {
-          id: session.userId,
-          email: session.email,
-        } : null,
+        session,
+        user: user || null,
       },
       { status: 200 }
     );

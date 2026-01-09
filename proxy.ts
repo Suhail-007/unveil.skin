@@ -59,7 +59,19 @@ export async function proxy(request: NextRequest) {
   // Use getUser() instead of getSession() for security - it validates with the server
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser()
+
+  // Debug logging
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    console.log('🔍 Proxy Debug:', {
+      path: request.nextUrl.pathname,
+      hasUser: !!user,
+      userId: user?.id,
+      error: error?.message,
+      cookies: request.cookies.getAll().map(c => c.name),
+    });
+  }
 
   // Add session data to request headers for API routes to access
   if (user) {

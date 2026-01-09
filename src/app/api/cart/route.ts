@@ -25,7 +25,7 @@ export async function GET() {
         name: product?.name ?? '',
         price: product?.price != null ? parseFloat(product.price.toString()) : 0,
         quantity: item.quantity,
-        image: product?.image ?? null,
+        image: product?.images?.[0]?.url ?? null,
       };
     });
 
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
           id: product.id,
           name: product.name,
           price: parseFloat(product.price.toString()),
-          image: product.image ?? null,
+          image: product.images?.[0]?.url ?? null,
         },
         quantity,
         message: 'Item added to cart (guest mode)',

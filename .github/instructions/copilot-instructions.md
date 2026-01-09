@@ -115,10 +115,11 @@ await sequelize.transaction(async (t) => {
 - **Authenticated users**: Redux → PostgreSQL via API routes.
 - **Critical flow**: Login triggers auto-merge via `POST /api/cart/sync` using Sequelize transactions.
 
-## Authentication Architecture (Middleware-based)
-- **Session verification**: Centralized in [src/middleware.ts](src/middleware.ts) - verifies once per request and attaches headers.
+## Authentication Architecture (Proxy-based)
+- **Session verification**: Centralized in [proxy.ts](proxy.ts) - verifies once per request and attaches headers.
+- **Next.js Proxy Pattern**: Next.js 16 uses `proxy.ts` (not `middleware.ts`) in the project root with `export async function proxy()` and `export const config`.
 - **Session helpers**: [src/lib/auth/session.ts](src/lib/auth/session.ts) provides `getSessionFromHeaders()` and `requireAuth()`.
-- **API routes**: Never create Supabase clients for session checks - use helpers that read middleware headers.
+- **API routes**: Never create Supabase clients for session checks - use helpers that read proxy headers.
 - **Auth mutations**: Only login/signup/logout routes use Supabase client directly (they modify auth state).
 - **Server components**: `await createClient()` from `@/lib/supabase/server` (async cookie API).
 - **Client components**: `createClient()` from `@/lib/supabase/client` (sync browser client).
@@ -135,6 +136,8 @@ if (session.isAuthenticated && session.userId) { /* auth logic */ }
 import { requireAuth } from '@/lib/auth/session';
 const { userId, email } = await requireAuth();
 ```
+
+**Note**: Session data comes from proxy headers (`x-session-verified`, `x-user-id`, `x-user-email`) set by [proxy.ts](proxy.ts).
 
 ## API Route Structure
 The cart API uses a single consolidated route at `/api/cart` with HTTP methods:
@@ -224,5 +227,8 @@ npm run build            # Production build
 - **Service layer**: [src/lib/services/](src/lib/services/) - all API calls with route constants
 - **Session helpers**: [src/lib/auth/session.ts](src/lib/auth/session.ts) - `getSessionFromHeaders()`, `requireAuth()`
 - Cart API: [src/app/api/cart/route.ts](src/app/api/cart/route.ts) - consolidated GET/POST/PATCH/DELETE
+- Guest → auth cart merge: [src/app/api/cart/sync/route.ts](src/app/api/cart/sync/route.ts)
+- Session proxy: [proxy.ts](proxy.ts) - verifies session and attaches headers
+
 - Guest → auth cart merge: [src/app/api/cart/sync/route.ts](src/app/api/cart/sync/route.ts)
 - Session proxy: [src/proxy.ts](src/proxy.ts) - verifies session and attaches headers

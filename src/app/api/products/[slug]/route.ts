@@ -3,10 +3,10 @@ import { Product } from '@/lib/models';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug: id } = params;
+    const { slug: id } = await params;
 
     const product = await Product.findOne({
       where: { id, is_active: true },

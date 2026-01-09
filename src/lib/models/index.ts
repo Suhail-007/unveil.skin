@@ -3,6 +3,8 @@ import { Product } from './Product';
 import { CartItem } from './CartItem';
 import { Order } from './Order';
 import { OrderItem } from './OrderItem';
+import FeatureFlag from './FeatureFlag';
+import Waitlist from './Waitlist';
 
 /**
  * Database Models Index
@@ -20,6 +22,8 @@ import { OrderItem } from './OrderItem';
  * - CartItem: Shopping cart items for users
  * - Order: Order management with status tracking
  * - OrderItem: Junction table linking orders with products
+ * - FeatureFlag: Feature flags for controlling app features
+ * - Waitlist: Waitlist signups with tracking
  */
 
 type DbModels = {
@@ -28,6 +32,8 @@ type DbModels = {
   CartItem: typeof CartItem;
   Order: typeof Order;
   OrderItem: typeof OrderItem;
+  FeatureFlag: typeof FeatureFlag;
+  Waitlist: typeof Waitlist;
 };
 
 // Initialize all models
@@ -36,11 +42,13 @@ const db: DbModels = {
   CartItem,
   Order,
   OrderItem,
+  FeatureFlag,
+  Waitlist,
   sequelize,
 };
 
 // Models object for associations (without sequelize)
-const models = { Product, CartItem, Order, OrderItem };
+const models = { Product, CartItem, Order, OrderItem, FeatureFlag, Waitlist };
 
 // Set up associations - call each model's associate method with proper types
 Product.associate({ CartItem, OrderItem });

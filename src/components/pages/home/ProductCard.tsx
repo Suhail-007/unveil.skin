@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { type Product } from "@/lib/services/product.service";
+import { useFeatureFlags } from "@/lib/features/FeatureFlagsContext";
 
 const MotionBox = motion(Box);
 
@@ -29,6 +30,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, index }: ProductCardProps) {
+  const { flags } = useFeatureFlags();
   const productUrl = `/products/${product.id}`;
   const ribbonText = product.category || (product.name.toLowerCase().includes('soap') ? 'Clarifying Cleanse' : 'Invisible SPF 50 PA+++');
   
@@ -87,7 +89,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
           <Text fontSize="sm" className="text-zinc-600 dark:text-zinc-300">
             {product.description || 'No description available'}
           </Text>
-          {parseFloat(product.price) > 0 && (
+          {flags.showPricing && parseFloat(product.price) > 0 && (
             <Text fontSize="xl" fontWeight="semibold" className="text-black dark:text-white">
               ₹{parseFloat(product.price).toFixed(2)}
             </Text>

@@ -52,7 +52,7 @@ export async function GET() {
             product: item.product
               ? {
                   name: item.product.name,
-                  image: item.product.image,
+                  image: item.product.images?.[0]?.url,
                 }
               : null,
           })),
