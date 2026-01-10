@@ -39,11 +39,6 @@ export async function getSessionFromHeaders(): Promise<SessionData> {
 export async function requireAuth(): Promise<{ userId: string; email: string }> {
   const session = await getSessionFromHeaders();
 
-  console.log('🔒 RequireAuth check:', {
-    isAuthenticated: session.isAuthenticated,
-    hasUserId: !!session.userId,
-  });
-
   if (!session.isAuthenticated || !session.userId) {
     console.error('❌ Authentication failed - throwing 401');
     throw new Response(JSON.stringify({ error: 'Authentication required' }), {
@@ -52,7 +47,6 @@ export async function requireAuth(): Promise<{ userId: string; email: string }> 
     });
   }
 
-  console.log('✅ Authentication successful:', session.userId);
   return {
     userId: session.userId,
     email: session.email || '',

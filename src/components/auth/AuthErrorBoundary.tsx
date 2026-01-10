@@ -15,9 +15,7 @@ export default function AuthErrorBoundary({ children }: { children: React.ReactN
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'TOKEN_REFRESHED') {
-          console.log('Token refreshed successfully');
         } else if (event === 'SIGNED_OUT') {
-          console.log('User signed out, redirecting to home');
           if (typeof window !== 'undefined') {
             // Only redirect if not already on home page or auth pages
             const currentPath = window.location.pathname;

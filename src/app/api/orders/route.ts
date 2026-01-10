@@ -27,7 +27,7 @@ export async function GET() {
             {
               model: Product,
               as: 'product',
-              attributes: ['id', 'name', 'image', 'price'],
+              attributes: ['id', 'name', 'images', 'price'],
             },
           ],
         },
@@ -41,7 +41,7 @@ export async function GET() {
         const orderData = order;
         return {
           id: orderData.id,
-          total: orderData.total,
+          total: orderData.totalAmount,
           status: orderData.status,
           createdAt: orderData.created_at,
           orderItems: orderData.orderItems?.map(item => ({

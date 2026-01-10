@@ -43,12 +43,9 @@ export default function Header() {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        console.log('🔄 Initializing auth...');
         const data = await getSession();
-        console.log('📦 Session data:', data);
 
         if (data.user) {
-          console.log('✅ User authenticated:', data.user.email);
           dispatch(setSession({ user: data.user, session: data.session }));
 
           // Load user cart
@@ -59,7 +56,6 @@ export default function Header() {
             // Cart fetch failed, ignore
           }
         } else {
-          console.log('👤 Guest user');
           dispatch(setGuest());
 
           // Load guest cart from localStorage

@@ -169,7 +169,7 @@ export default function OrdersPageContent() {
                         {order.status.toUpperCase()}
                       </Badge>
                       <Text fontSize="lg" fontWeight="bold">
-                        ${parseFloat(order.total).toFixed(2)}
+                        ${parseFloat(order.totalAmount?.toString() || '0').toFixed(2)}
                       </Text>
                     </VStack>
                   </HStack>

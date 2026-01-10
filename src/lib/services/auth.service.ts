@@ -82,7 +82,6 @@ export async function getSession(): Promise<AuthResponse> {
     credentials: 'include', // Important: include cookies
   });
   const data = await response.json();
-  console.log('📱 getSession response:', data);
   return data;
 }
 

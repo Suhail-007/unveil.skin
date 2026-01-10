@@ -20,10 +20,20 @@ class Order extends Model<
 > {
   declare id: CreationOptional<string>;
   declare userId: string;
-  declare total: string;
+  declare totalAmount: CreationOptional<number>;
   declare status: CreationOptional<string>;
+  
+  // Razorpay payment fields
+  declare razorpayOrderId?: CreationOptional<string | null>;
+  declare razorpayPaymentId?: CreationOptional<string | null>;
+  declare paymentMethod?: CreationOptional<string>;
+  declare paymentStatus?: CreationOptional<string>;
+  declare shippingAddress?: CreationOptional<Record<string, any> | null>;
+  
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
+  declare createdAt?: CreationOptional<Date>; // Alias for created_at
+  declare updatedAt?: CreationOptional<Date>; // Alias for updated_at
 
   declare orderItems?: NonAttribute<OrderItem[]>;
 
@@ -50,14 +60,42 @@ Order.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    total: {
+    totalAmount: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
+      field: 'total_amount',
     },
     status: {
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 'pending',
+    },
+    razorpayOrderId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'razorpay_order_id',
+    },
+    razorpayPaymentId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'razorpay_payment_id',
+    },
+    paymentMethod: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: 'razorpay',
+      field: 'payment_method',
+    },
+    paymentStatus: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: 'pending',
+      field: 'payment_status',
+    },
+    shippingAddress: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+      field: 'shipping_address',
     },
     created_at: {
       type: DataTypes.DATE,
