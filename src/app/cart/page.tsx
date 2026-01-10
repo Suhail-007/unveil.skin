@@ -1,17 +1,24 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Box, Button, Container, Heading, Stack, Text, Separator } from "@chakra-ui/react";
+import { Box, Button, Container, Heading, Stack, Text, Separator, Input } from "@chakra-ui/react";
 import CartItem from "@/components/cart/CartItem";
 import CheckoutButton from "@/components/cart/CheckoutButton";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import { setCartItems, updateQuantity, removeFromCart } from "@/lib/redux/slices/cartSlice";
+import { updateCartItem, removeCartItem } from "@/lib/services/cart.service";
 
 export default function CartPage() {
   const dispatch = useAppDispatch();
   const { items, total, itemCount } = useAppSelector((state) => state.cart);
   const { isGuest } = useAppSelector((state) => state.auth);
+  
+  const [couponCode, setCouponCode] = useState("");
+  const [couponApplied, setCouponApplied] = useState(false);
+  const [couponError, setCouponError] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
 
   // Load cart from localStorage for guests
   useEffect(() => {
@@ -36,15 +43,8 @@ export default function CartPage() {
       dispatch(updateQuantity({ id, quantity }));
     } else {
       try {
-        const response = await fetch("/api/cart/update", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cartItemId: id, quantity }),
-        });
-
-        if (response.ok) {
-          dispatch(updateQuantity({ id, quantity }));
-        }
+        await updateCartItem({ cartItemId: id, quantity });
+        dispatch(updateQuantity({ id, quantity }));
       } catch (error) {
         console.error("Failed to update cart:", error);
       }
@@ -56,20 +56,49 @@ export default function CartPage() {
       dispatch(removeFromCart(id));
     } else {
       try {
-        const response = await fetch("/api/cart/remove", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cartItemId: id }),
-        });
-
-        if (response.ok) {
-          dispatch(removeFromCart(id));
-        }
+        await removeCartItem({ cartItemId: id });
+        dispatch(removeFromCart(id));
       } catch (error) {
         console.error("Failed to remove from cart:", error);
       }
     }
   };
+
+  const handleApplyCoupon = async () => {
+    setCouponError("");
+    setApplyingCoupon(true);
+    
+    try {
+      // TODO: Call API to validate coupon
+      // const response = await validateCoupon({ code: couponCode });
+      
+      // Mock validation for now
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      if (couponCode.toUpperCase() === "WELCOME10") {
+        setDiscount(total * 0.1); // 10% discount
+        setCouponApplied(true);
+      } else if (couponCode.toUpperCase() === "SAVE20") {
+        setDiscount(total * 0.2); // 20% discount
+        setCouponApplied(true);
+      } else {
+        setCouponError("Invalid coupon code");
+      }
+    } catch (error) {
+      setCouponError("Failed to apply coupon");
+    } finally {
+      setApplyingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponCode("");
+    setCouponApplied(false);
+    setDiscount(0);
+    setCouponError("");
+  };
+
+  const finalTotal = total - discount;
 
   return (
     <Box minH="100vh" className="bg-gradient-to-br from-zinc-50 via-white to-zinc-100 dark:from-black dark:via-zinc-950 dark:to-zinc-900">
@@ -136,11 +165,74 @@ export default function CartPage() {
 
                   <Separator className="border-zinc-200 dark:border-zinc-800" />
 
+                  {/* Coupon Section */}
+                  <Box>
+                    <Text fontSize="sm" fontWeight="medium" mb={2} className="text-black dark:text-white">
+                      Have a coupon?
+                    </Text>
+                    {!couponApplied ? (
+                      <Stack direction="row" gap={2}>
+                        <Input
+                          placeholder="Enter code"
+                          value={couponCode}
+                          onChange={(e) => {
+                            setCouponCode(e.target.value.toUpperCase());
+                            setCouponError("");
+                          }}
+                          disabled={applyingCoupon}
+                          className="border-zinc-300 dark:border-zinc-700"
+                        />
+                        <Button
+                          onClick={handleApplyCoupon}
+                          disabled={!couponCode || applyingCoupon}
+                          className="bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+                        >
+                          {applyingCoupon ? "..." : "Apply"}
+                        </Button>
+                      </Stack>
+                    ) : (
+                      <Box
+                        p={3}
+                        borderRadius="md"
+                        className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+                      >
+                        <Stack direction="row" justify="space-between" align="center">
+                          <Text fontSize="sm" className="text-green-700 dark:text-green-300">
+                            <Box as="span" fontWeight="semibold">{couponCode}</Box> applied
+                          </Text>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={handleRemoveCoupon}
+                            className="text-green-700 dark:text-green-300"
+                          >
+                            Remove
+                          </Button>
+                        </Stack>
+                      </Box>
+                    )}
+                    {couponError && (
+                      <Text fontSize="xs" mt={1} className="text-red-500 dark:text-red-400">
+                        {couponError}
+                      </Text>
+                    )}
+                  </Box>
+
+                  <Separator className="border-zinc-200 dark:border-zinc-800" />
+
                   <Stack gap={2}>
                     <Stack direction="row" justify="space-between">
                       <Text className="text-zinc-600 dark:text-zinc-400">Subtotal</Text>
                       <Text fontWeight="medium">₹{total.toFixed(2)}</Text>
                     </Stack>
+                    {discount > 0 && (
+                      <Stack direction="row" justify="space-between">
+                        <Text className="text-green-600 dark:text-green-400">Discount</Text>
+                        <Text fontWeight="medium" className="text-green-600 dark:text-green-400">
+                          -₹{discount.toFixed(2)}
+                        </Text>
+                      </Stack>
+                    )}
                     <Stack direction="row" justify="space-between">
                       <Text className="text-zinc-600 dark:text-zinc-400">Shipping</Text>
                       <Text fontWeight="medium" className="text-green-600 dark:text-green-400">
@@ -156,7 +248,7 @@ export default function CartPage() {
                       Total
                     </Text>
                     <Text fontWeight="bold" fontSize="lg" className="text-black dark:text-white">
-                      ₹{total.toFixed(2)}
+                      ₹{finalTotal.toFixed(2)}
                     </Text>
                   </Stack>
 

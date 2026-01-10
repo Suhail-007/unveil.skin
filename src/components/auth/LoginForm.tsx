@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Box,
   Button,
@@ -11,13 +12,15 @@ import {
 } from "@chakra-ui/react";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { setSession } from "@/lib/redux/slices/authSlice";
-import { setCartItems } from "@/lib/redux/slices/cartSlice";
+import { login, getSession } from "@/lib/services/auth.service";
+import { syncGuestCart } from "@/lib/services/cart.service";
 
 interface LoginFormProps {
   onSuccess?: () => void;
+  returnUrl?: string;
 }
 
-export default function LoginForm({ onSuccess }: LoginFormProps) {
+export default function LoginForm({ onSuccess, returnUrl }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,17 +34,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Login failed");
-      }
+      const data = await login({ email, password });
 
       // Update Redux with session
       dispatch(setSession({ user: data.user, session: data.session }));
@@ -51,26 +44,16 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       if (guestCart) {
         const guestCartItems = JSON.parse(guestCart);
         if (guestCartItems.length > 0) {
-          await fetch("/api/cart/sync", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ guestCart: guestCartItems }),
-          });
+          await syncGuestCart({ guestCart: guestCartItems });
           localStorage.removeItem("guestCart");
         }
       }
 
-      // Fetch user cart
-      const cartResponse = await fetch("/api/cart/get");
-      if (cartResponse.ok) {
-        const cartData = await cartResponse.json();
-        dispatch(setCartItems(cartData.items));
-      }
-
+      // Redirect back to the page user came from
       if (onSuccess) {
         onSuccess();
       } else {
-        router.push("/");
+        router.push(returnUrl || "/");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -110,9 +93,16 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         </Box>
 
         <Box>
-          <Text fontSize="sm" fontWeight="medium" mb={2} className="text-black dark:text-white">
-            Password
-          </Text>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <Text fontSize="sm" fontWeight="medium" className="text-black dark:text-white">
+              Password
+            </Text>
+            <Link href="/auth/forgot-password">
+              <Text fontSize="xs" className="text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white">
+                Forgot password?
+              </Text>
+            </Link>
+          </Box>
           <Input
             type="password"
             value={password}

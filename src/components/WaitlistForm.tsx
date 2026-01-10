@@ -6,7 +6,10 @@ import {
   Input,
   Button,
   Stack,
+  Heading,
+  Text,
 } from "@chakra-ui/react";
+import { joinWaitlist } from "@/lib/services/waitlist.service";
 
 export default function WaitlistForm() {
   const [email, setEmail] = useState("");
@@ -35,19 +38,7 @@ export default function WaitlistForm() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, name: name.trim() || undefined }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to add to waitlist");
-      }
+      await joinWaitlist({ email, name: name.trim() || undefined });
 
       // Save email to localStorage for convenience
       try {
@@ -64,65 +55,85 @@ export default function WaitlistForm() {
 
   if (submitted) {
     return (
-      <Box borderRadius="xl" p={4} fontSize="sm" className="bg-zinc-50 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
-        Thanks! We&apos;ll let you know at <Box as="span" fontWeight="medium">{email}</Box> when we&apos;re ready.
+      <Box 
+        borderRadius="2xl" 
+        p={8} 
+        textAlign="center"
+        className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800"
+      >
+        <Box mb={3} fontSize="3xl">
+          ✓
+        </Box>
+        <Heading as="h3" fontSize="xl" mb={2} className="text-green-900 dark:text-green-100">
+          You&apos;re on the list!
+        </Heading>
+        <Text fontSize="sm" className="text-green-700 dark:text-green-300">
+          We&apos;ll notify you at <Box as="span" fontWeight="semibold">{email}</Box> when we launch.
+        </Text>
       </Box>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Stack direction={{ base: "column", sm: "row" }} gap={3} align={{ base: "stretch", sm: "flex-end" }}>
-        <Stack direction={{ base: "column", sm: "row" }} gap={2} flex={1}>
-          <Input
-            id="name"
-            type="text"
-            placeholder="Your name (optional)"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            disabled={loading}
-            borderRadius="full"
-            size={{ base: "md", sm: "md" }}
-            className="border-zinc-300 bg-white text-black focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white disabled:opacity-50"
-            aria-label="Name"
-            flex={{ base: "1", sm: "0 0 auto" }}
-            minW={{ base: "100%", sm: "160px" }}
-          />
-          <Input
-            id="email"
-            type="email"
-            required
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setError("");
-            }}
-            disabled={loading}
-            borderRadius="full"
-            size={{ base: "md", sm: "md" }}
-            className="border-zinc-300 bg-white text-black focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white disabled:opacity-50"
-            aria-label="Email address"
-            flex={1}
-          />
-        </Stack>
-        <Button
-          type="submit"
-          disabled={loading}
-          borderRadius="full"
-          size={{ base: "md", sm: "md" }}
-          px={8}
-          className="bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 disabled:opacity-50"
-          flexShrink={0}
-        >
-          {loading ? "Adding..." : "Notify me"}
-        </Button>
-      </Stack>
-      {error && (
-        <Box mt={2} fontSize="xs" color="red.500" className="text-red-500 dark:text-red-400">
-          {error}
+    <Box 
+      borderRadius="2xl" 
+      p={8} 
+      className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 shadow-lg"
+    >
+      <Stack gap={6}>
+        <Box>
+          <Heading as="h3" fontSize="2xl" mb={2} className="text-black dark:text-white">
+            Join the Waitlist
+          </Heading>
+          <Text fontSize="sm" className="text-zinc-600 dark:text-zinc-400">
+            Be the first to know when we launch. Get exclusive early access and special offers.
+          </Text>
         </Box>
-      )}
-    </form>
+
+        <form onSubmit={handleSubmit}>
+          <Stack gap={3}>
+            <Input
+              id="name"
+              type="text"
+              placeholder="Your name (optional)"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={loading}
+              size="lg"
+              className="border-zinc-300 bg-white text-black focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white disabled:opacity-50"
+              aria-label="Name"
+            />
+            <Input
+              id="email"
+              type="email"
+              required
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError("");
+              }}
+              disabled={loading}
+              size="lg"
+              className="border-zinc-300 bg-white text-black focus:border-black dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white disabled:opacity-50"
+              aria-label="Email address"
+            />
+            <Button
+              type="submit"
+              disabled={loading}
+              size="lg"
+              className="bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 disabled:opacity-50"
+            >
+              {loading ? "Adding you..." : "Notify Me"}
+            </Button>
+          </Stack>
+          {error && (
+            <Box mt={3} fontSize="sm" className="text-red-500 dark:text-red-400">
+              {error}
+            </Box>
+          )}
+        </form>
+      </Stack>
+    </Box>
   );
 }

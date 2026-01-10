@@ -1,23 +1,25 @@
-import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET() {
   try {
     const supabase = await createClient();
-
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.getSession();
+    
+    // Use getUser() instead of getSession() for security - it validates with the server
+    const { data: { user }, error } = await supabase.auth.getUser();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error('Session error:', error);
+      return NextResponse.json(
+        { session: null, user: null },
+        { status: 200 }
+      );
     }
 
     return NextResponse.json(
       {
-        session,
-        user: session?.user || null,
+        session: null,
+        user: user || null,
       },
       { status: 200 }
     );

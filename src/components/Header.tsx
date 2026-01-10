@@ -1,22 +1,39 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { Box, Container, HStack } from "@chakra-ui/react";
-import { useColorModeValue } from "@/components/ui/color-mode";
-import CartIcon from "./cart/CartIcon";
-import CartDrawer from "./cart/CartDrawer";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { setSession, setGuest } from "@/lib/redux/slices/authSlice";
-import { setCartItems } from "@/lib/redux/slices/cartSlice";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import {
+  Box,
+  HStack,
+  Button,
+} from '@chakra-ui/react';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { useColorModeValue } from '@/components/ui/color-mode';
+import UserDropdown from './UserDropdown';
+import CartIcon from './cart/CartIcon';
+import CartDrawer from './cart/CartDrawer';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { setSession, setGuest, clearSession } from '@/lib/redux/slices/authSlice';
+import { setCartItems } from '@/lib/redux/slices/cartSlice';
+import { getSession, logout } from '@/lib/services/auth.service';
+import { getCart } from '@/lib/services/cart.service';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
-  const [logoSrc, setLogoSrc] = useState("/Logo_Dark.svg");
+  const [logoSrc, setLogoSrc] = useState('/Logo_Dark.svg');
   const [cartOpen, setCartOpen] = useState(false);
-  const resolvedLogoSrc = useColorModeValue("/Logo_Dark.svg", "/Logo.svg");
+  const resolvedLogoSrc = useColorModeValue('/Logo_Dark.svg', '/Logo.svg');
   const dispatch = useAppDispatch();
-  const { loading } = useAppSelector((state) => state.auth);
+  const pathname = usePathname();
+
+  const router = useRouter();
+  const { user, loading, isGuest } = useAppSelector(state => state.auth);
+
+  // Create login/signup URLs with current page as return URL
+  const loginUrl = `/login?return_url=${encodeURIComponent(pathname)}`;
+  const signupUrl = `/signup?return_url=${encodeURIComponent(pathname)}`;
 
   useEffect(() => {
     setLogoSrc(resolvedLogoSrc);
@@ -26,24 +43,24 @@ export default function Header() {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const response = await fetch("/api/auth/session");
-        const data = await response.json();
+        const data = await getSession();
 
-        if (data.session && data.user) {
+        if (data.user) {
           dispatch(setSession({ user: data.user, session: data.session }));
 
           // Load user cart
-          const cartResponse = await fetch("/api/cart/get");
-          if (cartResponse.ok) {
-            const cartData = await cartResponse.json();
+          try {
+            const cartData = await getCart();
             dispatch(setCartItems(cartData.items));
+          } catch {
+            // Cart fetch failed, ignore
           }
         } else {
           dispatch(setGuest());
 
           // Load guest cart from localStorage
-          if (typeof window !== "undefined") {
-            const guestCart = localStorage.getItem("guestCart");
+          if (typeof window !== 'undefined') {
+            const guestCart = localStorage.getItem('guestCart');
             if (guestCart) {
               const cartItems = JSON.parse(guestCart);
               dispatch(setCartItems(cartItems));
@@ -51,7 +68,7 @@ export default function Header() {
           }
         }
       } catch (error) {
-        console.error("Auth initialization error:", error);
+        console.error('❌ Auth initialization error:', error);
         dispatch(setGuest());
       }
     };
@@ -59,26 +76,67 @@ export default function Header() {
     initAuth();
   }, [dispatch]);
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      dispatch(clearSession());
+      dispatch(setCartItems([]));
+      router.push('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const getUserDisplayName = () => {
+    if (!user) return '';
+    return user.user_metadata?.name || user.email?.split('@')[0] || 'User';
+  };
+
   return (
     <>
-      <Box as="header" borderBottom="1px" className="border-zinc-200 dark:border-zinc-800">
-        <Container maxW="7xl" px={{ base: 4, md: 6 }} py={6}>
-          <HStack justify="space-between">
-            <Link href="/">
+      <Box
+        as='header'
+        borderBottom='1px'
+        className='border-zinc-200 dark:border-zinc-800'
+        position='relative'
+        zIndex={50}>
+        <PageContainer py={6}>
+          <HStack justify='space-between'>
+            <Link href='/'>
               <Image
                 src={logoSrc}
-                alt="unveil.skin"
+                alt='unveil.skin'
                 width={360}
                 height={106}
                 priority
-                style={{ height: "64px", width: "auto" }}
-                className="h-16 w-auto"
+                style={{ height: '64px', width: 'auto' }}
+                className='h-16 w-auto'
               />
             </Link>
 
-            {!loading && <CartIcon onClick={() => setCartOpen(true)} />}
+            {!loading && (
+              <HStack gap={3}>
+                {isGuest ? (
+                  <>
+                    <Button asChild variant='ghost' size='sm'>
+                      <Link href={loginUrl}>Login</Link>
+                    </Button>
+                    <Button asChild colorPalette='blue' size='sm'>
+                      <Link href={signupUrl}>Sign Up</Link>
+                    </Button>
+                  </>
+                ) : (
+                  <UserDropdown
+                    userName={getUserDisplayName()}
+                    userEmail={user?.email}
+                    onLogout={handleLogout}
+                  />
+                )}
+                <CartIcon onClick={() => setCartOpen(true)} />
+              </HStack>
+            )}
           </HStack>
-        </Container>
+        </PageContainer>
       </Box>
 
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />

@@ -1,16 +1,21 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  experimental: {
+    proxyTimeout: 5000,
+  },
+  serverExternalPackages: ['sequelize', 'pg', 'pg-hstore', 'sequelize-cli'],
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "images.unsplash.com",
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
       },
     ],
-  },
-  experimental: {
-    optimizePackageImports: ["@chakra-ui/react"],
   },
 };
 
