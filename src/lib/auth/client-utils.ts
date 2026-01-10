@@ -8,7 +8,7 @@ import type { User } from '@supabase/supabase-js';
 /**
  * Handle authentication errors and refresh tokens automatically
  */
-export async function handleAuthError(error: any): Promise<boolean> {
+export async function handleAuthError(error: { code?: string; status?: number; message?: string; }): Promise<boolean> {
   // Check if this is a refresh token error
   const isTokenError = 
     error?.code === 'refresh_token_not_found' ||
@@ -100,7 +100,8 @@ export async function getCurrentUser(): Promise<User | null> {
     }
 
     return user;
-  } catch (error) {
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     await handleAuthError(error);
     return null;
   }

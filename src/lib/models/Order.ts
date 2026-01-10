@@ -28,7 +28,7 @@ class Order extends Model<
   declare razorpayPaymentId?: CreationOptional<string | null>;
   declare paymentMethod?: CreationOptional<string>;
   declare paymentStatus?: CreationOptional<string>;
-  declare shippingAddress?: CreationOptional<Record<string, any> | null>;
+  declare shippingAddress?: CreationOptional<Record<string, string | number> | null>;
   
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;

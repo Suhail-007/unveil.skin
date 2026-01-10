@@ -37,7 +37,7 @@ function MenuItem({ icon, label, href, onClick, variant = 'default' }: MenuItemP
 
   const content = (
     <>
-      <Box color={iconColor} transition="color 0.15s">
+      <Box color={iconColor} transition='color 0.15s'>
         {icon}
       </Box>
       <Text>{label}</Text>
@@ -65,14 +65,14 @@ function MenuItem({ icon, label, href, onClick, variant = 'default' }: MenuItemP
 
   if (href) {
     return (
-      <Box as={Link} href={href} {...commonProps} textDecoration="none">
-        {content}
+      <Box {...commonProps} textDecoration='none'>
+        <Link className='flex items-center justify-between gap-3' href={href}>{content}</Link>
       </Box>
     );
   }
 
   return (
-    <Box as="button" onClick={onClick} {...commonProps}>
+    <Box as='button' onClick={onClick} {...commonProps}>
       {content}
     </Box>
   );
@@ -115,32 +115,27 @@ export default function UserDropdown({ userName, userEmail, onLogout }: UserDrop
   };
 
   return (
-    <Box position="relative" ref={dropdownRef}>
+    <Box position='relative' ref={dropdownRef}>
       {/* Trigger Button */}
       <Box
-        as="button"
-        display="flex"
-        alignItems="center"
+        as='button'
+        display='flex'
+        alignItems='center'
         gap={2}
         px={3}
         py={2}
-        borderRadius="lg"
-        bg="transparent"
-        border="1px solid transparent"
-        cursor="pointer"
-        transition="all 0.2s"
+        borderRadius='lg'
+        bg='transparent'
+        border='1px solid transparent'
+        cursor='pointer'
+        transition='all 0.2s'
         _hover={{
           bg: triggerBg,
           borderColor: triggerBorderColor,
         }}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <Avatar size="sm" name={userName} />
-        <Text
-          fontSize="sm"
-          fontWeight="medium"
-          display={{ base: 'none', md: 'block' }}
-        >
+        onClick={() => setIsOpen(!isOpen)}>
+        <Avatar size='sm' name={userName} />
+        <Text fontSize='sm' fontWeight='medium' display={{ base: 'none', md: 'block' }}>
           {userName}
         </Text>
         <Box display={{ base: 'none', md: 'block' }} color={chevronColor}>
@@ -157,18 +152,18 @@ export default function UserDropdown({ userName, userEmail, onLogout }: UserDrop
       {/* Dropdown Menu */}
       {isOpen && (
         <Box
-          position="absolute"
-          top="calc(100% + 8px)"
+          position='absolute'
+          top='calc(100% + 8px)'
           right={0}
-          w="224px"
+          w='224px'
           bg={bgColor}
-          border="1px solid"
+          border='1px solid'
           borderColor={borderColor}
-          borderRadius="xl"
-          boxShadow="lg"
-          overflow="hidden"
+          borderRadius='xl'
+          boxShadow='lg'
+          overflow='hidden'
           zIndex={50}
-          animation="fadeIn 0.15s ease-out"
+          animation='fadeIn 0.15s ease-out'
           css={{
             '@keyframes fadeIn': {
               from: {
@@ -180,25 +175,14 @@ export default function UserDropdown({ userName, userEmail, onLogout }: UserDrop
                 transform: 'scale(1) translateY(0)',
               },
             },
-          }}
-        >
+          }}>
           {/* User Info Header */}
-          <Box px={3} py={2} bg={headerBg} borderBottom="1px solid" borderColor={borderColor}>
-            <Text
-              fontSize="sm"
-              fontWeight="medium"
-              color={textPrimary}
-              mb={userEmail ? 0.5 : 0}
-            >
+          <Box px={3} py={2} bg={headerBg} borderBottom='1px solid' borderColor={borderColor}>
+            <Text fontSize='sm' fontWeight='medium' color={textPrimary} mb={userEmail ? 0.5 : 0}>
               {userName}
             </Text>
             {userEmail && (
-              <Text
-                fontSize="xs"
-                color={textSecondary}
-                truncate
-                title={userEmail}
-              >
+              <Text fontSize='xs' color={textSecondary} truncate title={userEmail}>
                 {userEmail}
               </Text>
             )}
@@ -207,36 +191,19 @@ export default function UserDropdown({ userName, userEmail, onLogout }: UserDrop
           {/* Menu Items */}
           <Box py={1.5} px={1.5}>
             <Box onClick={handleMenuItemClick}>
-              <MenuItem
-                icon={<User size={16} />}
-                label="My Profile"
-                href="/profile"
-              />
+              <MenuItem icon={<User size={16} />} label='My Profile' href='/profile' />
             </Box>
             <Box onClick={handleMenuItemClick}>
-              <MenuItem
-                icon={<Package size={16} />}
-                label="My Orders"
-                href="/orders"
-              />
+              <MenuItem icon={<Package size={16} />} label='My Orders' href='/orders' />
             </Box>
             <Box onClick={handleMenuItemClick}>
-              <MenuItem
-                icon={<ShoppingCart size={16} />}
-                label="View Cart"
-                href="/cart"
-              />
+              <MenuItem icon={<ShoppingCart size={16} />} label='View Cart' href='/cart' />
             </Box>
 
             {/* Separator */}
-            <Box h="1px" bg={separatorBg} my={1.5} mx={1} />
+            <Box h='1px' bg={separatorBg} my={1.5} mx={1} />
 
-            <MenuItem
-              icon={<LogOut size={16} />}
-              label="Logout"
-              onClick={handleLogoutClick}
-              variant="danger"
-            />
+            <MenuItem icon={<LogOut size={16} />} label='Logout' onClick={handleLogoutClick} variant='danger' />
           </Box>
         </Box>
       )}
