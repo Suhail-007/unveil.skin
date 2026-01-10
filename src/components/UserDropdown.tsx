@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Box, Text, HStack, VStack } from '@chakra-ui/react';
 import { User, Package, ShoppingCart, LogOut, ChevronDown } from 'lucide-react';
@@ -84,13 +84,13 @@ export default function UserDropdown({ userName, userEmail, onLogout }: UserDrop
 
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const headerBg = useColorModeValue('gray.50', 'gray.750');
+  const headerBg = useColorModeValue('gray.50', 'gray.900');
   const textPrimary = useColorModeValue('gray.900', 'gray.100');
   const textSecondary = useColorModeValue('gray.600', 'gray.400');
   const separatorBg = useColorModeValue('gray.200', 'gray.700');
   const triggerBg = useColorModeValue('gray.100', 'gray.900');
   const triggerBorderColor = useColorModeValue('gray.200', 'gray.800');
-  const triggerTextColor = useColorModeValue('gray.500', 'gray.400');
+  const chevronColor = useColorModeValue('#71717a', '#a1a1aa');
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -143,15 +143,15 @@ export default function UserDropdown({ userName, userEmail, onLogout }: UserDrop
         >
           {userName}
         </Text>
-        <ChevronDown
-          size={16}
-          color={useColorModeValue('#71717a', '#a1a1aa')}
-          style={{
-            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: 'transform 0.2s',
-            display: window.innerWidth >= 768 ? 'block' : 'none',
-          }}
-        />
+        <Box display={{ base: 'none', md: 'block' }} color={chevronColor}>
+          <ChevronDown
+            size={16}
+            style={{
+              transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s',
+            }}
+          />
+        </Box>
       </Box>
 
       {/* Dropdown Menu */}

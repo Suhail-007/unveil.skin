@@ -1,4 +1,5 @@
-import { headers } from 'next/headers';
+import { createClient } from "../supabase/server";
+import { metadata } from './../../app/layout';
 
 export interface SessionData {
   userId: string | null;
@@ -11,18 +12,12 @@ export interface SessionData {
  * This replaces direct Supabase client calls in API routes
  */
 export async function getSessionFromHeaders(): Promise<SessionData> {
-  const headersList = await headers();
-  const isVerified = headersList.get('x-session-verified') === 'true';
-  const userId = headersList.get('x-user-id');
-  const email = headersList.get('x-user-email');
-  
-  console.log('🔐 Session Headers:', {
-    isVerified,
-    userId,
-    email,
-    allHeaders: Array.from(headersList.entries()).filter(([key]) => key.startsWith('x-'))
-  });
-  
+  const supabaseClient = await createClient();
+  const session = await supabaseClient.auth.getSession();
+  const isVerified = session.data.session?.user?.user_metadata['email_verified']  ? true : false;
+  const userId = session.data.session?.user?.id || null;
+  const email = session.data.session?.user?.email || null;
+
   if (!isVerified) {
     return {
       userId: null,
@@ -43,18 +38,18 @@ export async function getSessionFromHeaders(): Promise<SessionData> {
  */
 export async function requireAuth(): Promise<{ userId: string; email: string }> {
   const session = await getSessionFromHeaders();
-  
-  console.log('🔒 RequireAuth check:', { 
-    isAuthenticated: session.isAuthenticated, 
-    hasUserId: !!session.userId 
+
+  console.log('🔒 RequireAuth check:', {
+    isAuthenticated: session.isAuthenticated,
+    hasUserId: !!session.userId,
   });
-  
+
   if (!session.isAuthenticated || !session.userId) {
     console.error('❌ Authentication failed - throwing 401');
-    throw new Response(
-      JSON.stringify({ error: 'Authentication required' }),
-      { status: 401, headers: { 'Content-Type': 'application/json' } }
-    );
+    throw new Response(JSON.stringify({ error: 'Authentication required' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   console.log('✅ Authentication successful:', session.userId);

@@ -57,7 +57,7 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
           </Text>
 
           <Stack direction="row" justify="space-between" mt={2}>
-            <Stack direction="row" gap={2}>
+            <Stack direction="row" align="center" gap={2}>
               <IconButton
                 size="sm"
                 onClick={handleDecrement}

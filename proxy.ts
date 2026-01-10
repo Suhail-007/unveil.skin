@@ -3,9 +3,11 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 
 export async function proxy(request: NextRequest) {
+  const requestHeaders = new Headers(request.headers)
+
   let response = NextResponse.next({
     request: {
-      headers: request.headers,
+      headers: requestHeaders,
     },
   })
 
@@ -25,7 +27,7 @@ export async function proxy(request: NextRequest) {
           })
           response = NextResponse.next({
             request: {
-              headers: request.headers,
+              headers: requestHeaders,
             },
           })
           response.cookies.set({
@@ -42,7 +44,7 @@ export async function proxy(request: NextRequest) {
           })
           response = NextResponse.next({
             request: {
-              headers: request.headers,
+              headers: requestHeaders,
             },
           })
           response.cookies.set({
@@ -75,11 +77,23 @@ export async function proxy(request: NextRequest) {
 
   // Add session data to request headers for API routes to access
   if (user) {
-    response.headers.set('x-user-id', user.id)
-    response.headers.set('x-user-email', user.email || '')
-    response.headers.set('x-session-verified', 'true')
+    requestHeaders.set('x-user-id', user.id)
+    requestHeaders.set('x-user-email', user.email || '')
+    requestHeaders.set('x-session-verified', 'true')
+
+    response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    })
   } else {
-    response.headers.set('x-session-verified', 'false')
+    requestHeaders.set('x-session-verified', 'false')
+
+    response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    })
   }
 
   return response

@@ -47,7 +47,7 @@ export default function Header() {
         const data = await getSession();
         console.log('📦 Session data:', data);
 
-        if (data.session && data.user) {
+        if (data.user) {
           console.log('✅ User authenticated:', data.user.email);
           dispatch(setSession({ user: data.user, session: data.session }));
 

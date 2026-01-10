@@ -16,19 +16,9 @@ export async function GET() {
       );
     }
 
-    // If we have a user, construct a minimal session object
-    const session = user ? {
-      user,
-      access_token: '', // Not exposing tokens to client
-      refresh_token: '',
-      expires_at: 0,
-      expires_in: 0,
-      token_type: 'bearer'
-    } : null;
-
     return NextResponse.json(
       {
-        session,
+        session: null,
         user: user || null,
       },
       { status: 200 }
