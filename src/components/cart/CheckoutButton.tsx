@@ -13,11 +13,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@chakra-ui/react';
+import { Button, Box, Portal } from '@chakra-ui/react';
 import { useAppSelector } from '@/lib/redux/hooks';
 import AuthModal from '../auth/AuthModal';
 import RazorpayCheckout from './RazorpayCheckout';
+import ShippingAddressForm, { type ShippingAddress } from './ShippingAddressForm';
 import { toaster } from '../ui/toaster';
+import { useFeatureFlags } from '@/lib/features/FeatureFlagsContext';
 
 interface CheckoutButtonProps {
   onCheckout?: () => void;
@@ -34,12 +36,26 @@ export default function CheckoutButton({
   disabled = false,
   useRazorpay = true, // Default to Razorpay
 }: CheckoutButtonProps) {
+  const { flags } = useFeatureFlags();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showShippingForm, setShowShippingForm] = useState(false);
   const [showRazorpay, setShowRazorpay] = useState(false);
+  const [shippingAddress, setShippingAddress] = useState<ShippingAddress | null>(null);
   const { isGuest } = useAppSelector(state => state.auth);
   const { items, total } = useAppSelector(state => state.cart);
 
   const handleClick = () => {
+    // Check if checkout is enabled
+    if (!flags.enableCheckout) {
+      toaster.create({
+        title: 'Checkout unavailable',
+        description: 'Checkout is currently disabled',
+        duration: 3000,
+        type: 'warning',
+      });
+      return;
+    }
+    
     // Check if user is authenticated
     if (isGuest) {
       // Show auth modal if user is a guest
@@ -58,14 +74,19 @@ export default function CheckoutButton({
       return;
     }
 
-    // Proceed with checkout
+    // Show shipping address form first
     if (useRazorpay) {
-      // Use Razorpay integration
-      setShowRazorpay(true);
+      setShowShippingForm(true);
     } else if (onCheckout) {
       // Use custom checkout handler
       onCheckout();
     }
+  };
+
+  const handleShippingSubmit = (address: ShippingAddress) => {
+    setShippingAddress(address);
+    setShowShippingForm(false);
+    setShowRazorpay(true);
   };
 
   const handlePaymentSuccess = (orderId: string) => {
@@ -97,11 +118,12 @@ export default function CheckoutButton({
 
   return (
     <>
-      {showRazorpay && useRazorpay ? (
+      {showRazorpay && useRazorpay && shippingAddress ? (
         // Show Razorpay checkout
         <RazorpayCheckout
           amount={total}
           cartItems={cartItemsForRazorpay}
+          shippingAddress={shippingAddress}
           onSuccess={handlePaymentSuccess}
           onError={handlePaymentError}
           buttonText={children as string}
@@ -119,6 +141,31 @@ export default function CheckoutButton({
 
       {/* Auth modal for guest users */}
       <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} allowGuest={false} />
+
+      {/* Shipping Address Form Modal */}
+      {showShippingForm && (
+        <Portal>
+          <Box
+            position="fixed"
+            inset="0"
+            bg="blackAlpha.600"
+            zIndex={40}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            p={4}
+            onClick={() => setShowShippingForm(false)}
+          >
+            <Box
+              maxW="600px"
+              w="full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ShippingAddressForm onSubmit={handleShippingSubmit} />
+            </Box>
+          </Box>
+        </Portal>
+      )}
     </>
   );
 }

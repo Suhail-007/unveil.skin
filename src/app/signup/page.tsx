@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Box, Container, Heading, Stack, Text } from "@chakra-ui/react";
 import SignupForm from "@/components/auth/SignupForm";

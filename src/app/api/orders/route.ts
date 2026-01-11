@@ -43,7 +43,7 @@ export async function GET() {
           id: orderData.id,
           total: orderData.totalAmount,
           status: orderData.status,
-          createdAt: orderData.created_at,
+          created_at: orderData.created_at,
           orderItems: orderData.orderItems?.map(item => ({
             id: item.id,
             productId: item.productId,

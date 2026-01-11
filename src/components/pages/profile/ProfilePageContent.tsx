@@ -19,8 +19,10 @@ import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import { setSession } from "@/lib/redux/slices/authSlice";
 import { Field } from "@/components/ui/field";
 import { toaster } from "@/components/ui/toaster";
+import { useFeatureFlags } from "@/lib/features/FeatureFlagsContext";
 
 export default function ProfilePageContent() {
+  const { flags } = useFeatureFlags();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user, isGuest, loading: authLoading } = useAppSelector((state) => state.auth);
@@ -33,10 +35,10 @@ export default function ProfilePageContent() {
   const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
-    if (!authLoading && isGuest) {
+    if (!authLoading && (isGuest || !flags.enableUserAccounts)) {
       router.push("/login");
     }
-  }, [isGuest, authLoading, router]);
+  }, [isGuest, authLoading, router, flags.enableUserAccounts]);
 
   useEffect(() => {
     if (user?.user_metadata?.name) {

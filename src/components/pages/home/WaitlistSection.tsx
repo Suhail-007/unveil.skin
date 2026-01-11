@@ -4,6 +4,7 @@ import { Stack, Text } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import WaitlistForm from "@/components/WaitlistForm";
 import { Section } from "@/components/layout/Section";
+import { useFeatureFlags } from "@/lib/features/FeatureFlagsContext";
 
 const MotionSection = motion(Section);
 
@@ -17,6 +18,12 @@ const fadeInUp = {
 };
 
 export default function WaitlistSection() {
+  const { flags } = useFeatureFlags();
+  
+  if (!flags.showWaitlist) {
+    return null;
+  }
+  
   return (
     <MotionSection
       initial="initial"

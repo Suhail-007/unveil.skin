@@ -6,8 +6,8 @@ import { type Product as ProductType } from '@/lib/services/product.service';
 import { unstable_cache } from 'next/cache';
 import { type Metadata } from 'next';
 
-// Cache the page for 1 hour (3600 seconds)
-export const revalidate = 3600;
+// Cache the page for 2 hours (7200 seconds)
+export const revalidate = 7200;
 
 const getProduct = unstable_cache(
   async (id: string): Promise<ProductType | null> => {
@@ -40,7 +40,7 @@ const getProduct = unstable_cache(
     }
   },
   ['product-by-id'],
-  { revalidate: 3600, tags: ['products'] }
+  { revalidate: 7200, tags: ['products'] }
 );
 
 // Generate static params for all active products at build time

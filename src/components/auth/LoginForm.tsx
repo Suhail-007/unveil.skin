@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   Box,
@@ -27,6 +27,10 @@ export default function LoginForm({ onSuccess, returnUrl }: LoginFormProps) {
   const [error, setError] = useState("");
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
+  
+  // Get returnUrl from URL params if not provided as prop
+  const redirectUrl = returnUrl || searchParams.get("return_url") || "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +57,7 @@ export default function LoginForm({ onSuccess, returnUrl }: LoginFormProps) {
       if (onSuccess) {
         onSuccess();
       } else {
-        router.push(returnUrl || "/");
+        router.push(redirectUrl);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");

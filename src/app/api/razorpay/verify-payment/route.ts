@@ -22,7 +22,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { createClient } from '@/lib/supabase/server';
 import sequelize from '@/lib/sequelize';
-import { Order } from '@/lib/models/Order';
+import { Order, OrderStatus, PaymentStatus } from '@/lib/models/Order';
 import { OrderItem } from '@/lib/models/OrderItem';
 import { CartItem } from '@/lib/models/CartItem';
 import { Product } from '@/lib/models/Product';
@@ -172,10 +172,10 @@ export async function POST(request: NextRequest) {
     const order = await Order.create(
       {
         userId: user.id,
-        status: 'paid', // Payment is verified
+        status: OrderStatus.PROCESSING, // Payment is verified, order is processing
         totalAmount,
         paymentMethod: 'razorpay',
-        paymentStatus: 'paid',
+        paymentStatus: PaymentStatus.PAID,
         razorpayOrderId: razorpay_order_id,
         razorpayPaymentId: razorpay_payment_id,
         shippingAddress: orderDetails?.shippingAddress || {},
@@ -227,7 +227,7 @@ export async function POST(request: NextRequest) {
         id: order.id,
         totalAmount: order.totalAmount,
         status: order.status,
-        createdAt: order.createdAt,
+        createdAt: order.created_at,
       },
     });
 

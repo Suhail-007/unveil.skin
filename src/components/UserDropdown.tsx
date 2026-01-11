@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Box, Text, HStack, VStack } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { User, Package, ShoppingCart, LogOut, ChevronDown } from 'lucide-react';
 import { Avatar } from '@/components/ui/avatar';
 import { useColorModeValue } from '@/components/ui/color-mode';
+import { useFeatureFlags } from '../lib/features/FeatureFlagsContext';
 
 interface UserDropdownProps {
   userName: string;
@@ -66,7 +67,9 @@ function MenuItem({ icon, label, href, onClick, variant = 'default' }: MenuItemP
   if (href) {
     return (
       <Box {...commonProps} textDecoration='none'>
-        <Link className='flex items-center justify-between gap-3' href={href}>{content}</Link>
+        <Link className='flex items-center justify-between gap-3' href={href}>
+          {content}
+        </Link>
       </Box>
     );
   }
@@ -81,6 +84,7 @@ function MenuItem({ icon, label, href, onClick, variant = 'default' }: MenuItemP
 export default function UserDropdown({ userName, userEmail, onLogout }: UserDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { flags } = useFeatureFlags();
 
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
