@@ -4,11 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import {
-  Box,
-  HStack,
-  Button,
-} from '@chakra-ui/react';
+import { Box, HStack, Button } from '@chakra-ui/react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useColorModeValue } from '@/components/ui/color-mode';
 import UserDropdown from './UserDropdown';
@@ -20,6 +16,7 @@ import { setCartItems } from '@/lib/redux/slices/cartSlice';
 import { getSession, logout } from '@/lib/services/auth.service';
 import { getCart } from '@/lib/services/cart.service';
 import { useRouter } from 'next/navigation';
+import { useFeatureFlags } from '../lib/features/FeatureFlagsContext';
 
 export default function Header() {
   const [logoSrc, setLogoSrc] = useState('/Logo_Dark.svg');
@@ -27,6 +24,7 @@ export default function Header() {
   const resolvedLogoSrc = useColorModeValue('/Logo_Dark.svg', '/Logo.svg');
   const dispatch = useAppDispatch();
   const pathname = usePathname();
+  const flags = useFeatureFlags();
 
   const router = useRouter();
   const { user, loading, isGuest } = useAppSelector(state => state.auth);
@@ -118,28 +116,28 @@ export default function Header() {
               <HStack gap={3}>
                 {isGuest ? (
                   <>
-                    <Button asChild variant='ghost' size='sm'>
-                      <Link href={loginUrl}>Login</Link>
-                    </Button>
-                    <Button asChild colorPalette='blue' size='sm'>
-                      <Link href={signupUrl}>Sign Up</Link>
-                    </Button>
+                    {flags.flags.enableUserAccounts && (
+                      <>
+                        <Button asChild variant='ghost' size='sm'>
+                          <Link href={loginUrl}>Login</Link>
+                        </Button>
+                        <Button asChild colorPalette='blue' size='sm'>
+                          <Link href={signupUrl}>Sign Up</Link>
+                        </Button>
+                      </>
+                    )}
                   </>
                 ) : (
-                  <UserDropdown
-                    userName={getUserDisplayName()}
-                    userEmail={user?.email}
-                    onLogout={handleLogout}
-                  />
+                  <UserDropdown userName={getUserDisplayName()} userEmail={user?.email} onLogout={handleLogout} />
                 )}
-                <CartIcon onClick={() => setCartOpen(true)} />
+                {flags.flags.enableCart && <CartIcon onClick={() => setCartOpen(true)} />}
               </HStack>
             )}
           </HStack>
         </PageContainer>
       </Box>
 
-      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+  {   flags.flags.enableCart && <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />}
     </>
   );
 }

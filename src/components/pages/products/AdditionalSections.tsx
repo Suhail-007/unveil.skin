@@ -1,5 +1,8 @@
+"use client";
+
 import { Box, Heading, SimpleGrid, Text } from "@chakra-ui/react";
 import { Product } from "../../../lib/services";
+import { useFeatureFlags } from "@/lib/features/FeatureFlagsContext";
 
 interface AdditionalSectionsProps {
   benefits?: Product['benefits'];
@@ -12,7 +15,13 @@ export default function AdditionalSections({
   howToUse, 
   dermatologistNotes 
 }: AdditionalSectionsProps) {
+  const { flags } = useFeatureFlags();
   const additionalSections: Record<string, Record<string, string>> = {};
+  
+  // Only show benefits if flag is enabled
+  if (!flags.showBenefits) {
+    return null;
+  }
   
   [benefits, howToUse, dermatologistNotes].forEach(field => {
     if (field) {

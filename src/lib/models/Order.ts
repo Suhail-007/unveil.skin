@@ -10,6 +10,23 @@ import {
 import sequelize from '../connection';
 import type { OrderItem } from './OrderItem';
 
+// Order status enum
+export enum OrderStatus {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  SHIPPED = 'shipped',
+  DELIVERED = 'delivered',
+  CANCELLED = 'cancelled',
+}
+
+// Payment status enum
+export enum PaymentStatus {
+  PENDING = 'pending',
+  PAID = 'paid',
+  FAILED = 'failed',
+  REFUND = 'refund',
+}
+
 type OrderModels = {
   OrderItem: typeof import('./OrderItem').OrderItem;
 };
@@ -21,19 +38,17 @@ class Order extends Model<
   declare id: CreationOptional<string>;
   declare userId: string;
   declare totalAmount: CreationOptional<number>;
-  declare status: CreationOptional<string>;
+  declare status: CreationOptional<OrderStatus>;
   
   // Razorpay payment fields
   declare razorpayOrderId?: CreationOptional<string | null>;
   declare razorpayPaymentId?: CreationOptional<string | null>;
   declare paymentMethod?: CreationOptional<string>;
-  declare paymentStatus?: CreationOptional<string>;
-  declare shippingAddress?: CreationOptional<Record<string, any> | null>;
+  declare paymentStatus?: CreationOptional<PaymentStatus>;
+  declare shippingAddress: Record<string, string | number>;
   
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
-  declare createdAt?: CreationOptional<Date>; // Alias for created_at
-  declare updatedAt?: CreationOptional<Date>; // Alias for updated_at
 
   declare orderItems?: NonAttribute<OrderItem[]>;
 
@@ -66,9 +81,9 @@ Order.init(
       field: 'total_amount',
     },
     status: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM(...Object.values(OrderStatus)),
       allowNull: false,
-      defaultValue: 'pending',
+      defaultValue: OrderStatus.PENDING,
     },
     razorpayOrderId: {
       type: DataTypes.STRING,
@@ -87,14 +102,14 @@ Order.init(
       field: 'payment_method',
     },
     paymentStatus: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM(...Object.values(PaymentStatus)),
       allowNull: true,
-      defaultValue: 'pending',
+      defaultValue: PaymentStatus.PENDING,
       field: 'payment_status',
     },
     shippingAddress: {
       type: DataTypes.JSONB,
-      allowNull: true,
+      allowNull: false,
       field: 'shipping_address',
     },
     created_at: {

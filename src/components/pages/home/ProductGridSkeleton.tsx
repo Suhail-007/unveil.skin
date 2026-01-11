@@ -1,7 +1,10 @@
 import { Box, SimpleGrid, Skeleton, Stack } from "@chakra-ui/react";
+import { Section } from "../../layout/Section";
 
 export default function ProductGridSkeleton() {
   return (
+    <Section id="skeleton-products">
+
     <SimpleGrid columns={{ base: 1, lg: 2 }} gap={{ base: 10, md: 14 }}>
       {[1, 2].map((i) => (
         <Box
@@ -20,5 +23,6 @@ export default function ProductGridSkeleton() {
         </Box>
       ))}
     </SimpleGrid>
+    </Section>
   );
 }

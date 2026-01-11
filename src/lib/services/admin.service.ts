@@ -45,9 +45,9 @@ export interface ProductResponse {
   slug: string;
   stock: number;
   is_active: boolean;
-  benefits: any[] | null;
-  how_to_use: any[] | null;
-  dermatologist_notes: any[] | null;
+  benefits: Record<string, string>[] | null;
+  how_to_use: Record<string, string>[] | null;
+  dermatologist_notes: Record<string, string>[] | null;
   created_at: Date;
   updated_at: Date;
 }

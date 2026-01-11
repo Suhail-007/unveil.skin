@@ -37,6 +37,7 @@ import type {
   RazorpaySuccessResponse,
   RazorpayErrorResponse,
 } from '@/types/razorpay.types';
+import type { ShippingAddress } from './ShippingAddressForm';
 
 interface CartItem {
   productId: string;
@@ -47,7 +48,7 @@ interface CartItem {
 interface RazorpayCheckoutProps {
   amount: number; // Amount in rupees
   cartItems: CartItem[];
-  shippingAddress?: Record<string, string>;
+  shippingAddress?: ShippingAddress;
   onSuccess?: (orderId: string) => void;
   onError?: (error: string) => void;
   buttonText?: string;
@@ -172,11 +173,35 @@ export default function RazorpayCheckout({
    * Open Razorpay checkout modal
    * 
    * This function:
-   * 1. Creates order on backend
-   * 2. Opens Razorpay payment modal
-   * 3. Configures payment options and callbacks
+   * 1. Validates shipping address is provided
+   * 2. Creates order on backend
+   * 3. Opens Razorpay payment modal
+   * 4. Configures payment options and callbacks
    */
   const openRazorpayCheckout = async () => {
+    // Validate shipping address is provided
+    if (!shippingAddress || Object.keys(shippingAddress).length === 0) {
+      const errorMessage = "Please provide a shipping address before placing your order.";
+      if (onError) {
+        onError(errorMessage);
+      }
+      alert(errorMessage);
+      return;
+    }
+
+    // Validate required shipping address fields
+    const requiredFields = ['name', 'street', 'city', 'state', 'pincode', 'phone'];
+    const missingFields = requiredFields.filter(field => !shippingAddress[field]);
+    
+    if (missingFields.length > 0) {
+      const errorMessage = `Please complete all shipping address fields: ${missingFields.join(', ')}`;
+      if (onError) {
+        onError(errorMessage);
+      }
+      alert(errorMessage);
+      return;
+    }
+
     if (!scriptLoaded) {
       alert("Payment gateway is loading. Please try again in a moment.");
       return;

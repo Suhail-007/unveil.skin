@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Box,
   Container,
@@ -9,16 +7,8 @@ import {
   Link,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import { useColorModeValue } from "@/components/ui/color-mode";
-import { useEffect, useState } from "react";
 
 export default function RefundPolicyPage() {
-  const [logoSrc, setLogoSrc] = useState("/Logo.svg");
-  const resolvedLogoSrc = useColorModeValue("/Logo.svg", "/Logo_Dark.svg");
-  
-  useEffect(() => {
-    setLogoSrc(resolvedLogoSrc);
-  }, [resolvedLogoSrc]);
 
   return (
     <Box minH="100vh" className="bg-gradient-to-br from-zinc-50 via-white to-zinc-100 dark:from-black dark:via-zinc-950 dark:to-zinc-900">
@@ -26,13 +16,22 @@ export default function RefundPolicyPage() {
         <Container maxW="7xl" px={{ base: 4, md: 6 }} py={6}>
           <Link href="/">
             <Image
-              src={logoSrc}
+              src="/Logo_Dark.svg"
               alt="unveil.skin"
               width={180}
               height={53}
               priority
               style={{ height: '32px', width: 'auto' }}
-              className="h-8 w-auto"
+              className="h-8 w-auto dark:hidden"
+            />
+            <Image
+              src="/Logo.svg"
+              alt="unveil.skin"
+              width={180}
+              height={53}
+              priority
+              style={{ height: '32px', width: 'auto' }}
+              className="h-8 w-auto hidden dark:block"
             />
           </Link>
         </Container>

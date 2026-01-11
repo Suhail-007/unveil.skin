@@ -33,12 +33,6 @@ export default function AnimatedBackground() {
         bg="rgba(200, 141, 141, 0.1)"
         filter="blur(80px)"
         animation="float 20s ease-in-out infinite"
-        style={{
-          '@keyframes float': {
-            '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-            '50%': { transform: 'translate(-30px, 30px) scale(1.1)' },
-          },
-        }}
       />
       
       <Box
@@ -51,12 +45,6 @@ export default function AnimatedBackground() {
         bg="rgba(200, 141, 141, 0.08)"
         filter="blur(80px)"
         animation="float 15s ease-in-out infinite reverse"
-        style={{
-          '@keyframes float': {
-            '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-            '50%': { transform: 'translate(30px, -30px) scale(1.1)' },
-          },
-        }}
       />
       
       <Box
@@ -70,10 +58,7 @@ export default function AnimatedBackground() {
         filter="blur(60px)"
         animation="pulse 10s ease-in-out infinite"
         style={{
-          '@keyframes pulse': {
-            '0%, 100%': { transform: 'translate(-50%, -50%) scale(1)' },
-            '50%': { transform: 'translate(-50%, -50%) scale(1.2)' },
-          },
+          transform: 'translate(-50%, -50%)',
         }}
       />
     </Box>
